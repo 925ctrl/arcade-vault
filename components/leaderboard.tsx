@@ -11,7 +11,7 @@ export function Leaderboard({ scores }: { scores: ScoreRow[] }) {
           <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
           <div className="pl">
             {r.name}
-            <div style={{ fontSize: 10, color: "var(--ink-faint)", letterSpacing: "0.1em" }}>
+            <div className="text-[10px] tracking-[0.1em] text-ink-faint">
               {r.date}
             </div>
           </div>

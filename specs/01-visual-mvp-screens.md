@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual: pantallas del prototipo en Next.js
 
-> **Estado:** Aprobado
+> **Estado:** Implementados
 > **Depende de:** —
 > **Fecha:** 2026-11-12
 > **Objetivo:** Portar a Next.js App Router las cinco pantallas del prototipo de `references/templates/` (biblioteca, detalle, reproductor, auth y salón de la fama) con navegación real y persistencia mock en localStorage, sin implementar ningún juego.
@@ -97,23 +97,23 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir com
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] La consola del navegador no muestra errores ni avisos de hidratación en ninguna ruta.
-- [ ] `/`, `/games/caida`, `/games/caida/play`, `/auth` y `/hall-of-fame` se ven igual que las pantallas equivalentes de `references/templates/Arcade Vault.html` a 1440 px y a 375 px.
-- [ ] En `/`, escribir "ser" deja solo SERPENTINA; elegir el chip SHOOTER deja solo INVASORES y ROCAS; una búsqueda sin coincidencias muestra "NO HAY RESULTADOS".
-- [ ] Clicar una tarjeta o su botón JUGAR navega a `/games/<id>`.
-- [ ] El enlace "Biblioteca" de la nav aparece activo en `/`, `/games/<id>` y `/games/<id>/play`; "Salón de la Fama" aparece activo en `/hall-of-fame`.
-- [ ] Bajo 840 px se oculta la barra de enlaces, aparece el botón ≡ y el panel lateral abre y cierra (también al pulsar el fondo).
-- [ ] `/games/no-existe` y `/games/no-existe/play` muestran la página 404 neón con enlace a la biblioteca.
-- [ ] En el reproductor la puntuación sube sola; PAUSA la detiene y muestra "EN PAUSA"; REANUDAR la continúa.
-- [ ] FIN abre el modal con la puntuación final; GUARDAR PUNTUACIÓN añade una entrada `{ game, score, name, at }` a `localStorage["av_scores"]` y muestra "▸ PUNTUACIÓN GUARDADA_".
-- [ ] JUGAR DE NUEVO reinicia puntuación a 0, vidas a 3 y nivel a 01; SALIR vuelve a `/games/<id>`.
-- [ ] En `/auth`, enviar con usuario "neonfox" guarda `{"name":"NEONFOX"}` en `av_user`, navega a `/` y la nav muestra "NEONFOX ▾".
-- [ ] Clicar "NEONFOX ▾" borra `av_user` y la nav vuelve a mostrar "Iniciar Sesión".
-- [ ] La sesión se conserva al recargar la página.
-- [ ] En `/hall-of-fame` cada pestaña cambia podio y tabla; la fila "TU MEJOR MARCA" aparece solo con sesión iniciada y una puntuación guardada para ese juego, y muestra la mayor de ellas.
-- [ ] Con `av_user` o `av_scores` corruptos en localStorage la app carga sin errores y actúa como si no existieran.
-- [ ] `app/page.tsx` ya no contiene nada del starter de Next.js.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] La consola del navegador no muestra errores ni avisos de hidratación en ninguna ruta.
+- [x] `/`, `/games/caida`, `/games/caida/play`, `/auth` y `/hall-of-fame` se ven igual que las pantallas equivalentes de `references/templates/Arcade Vault.html` a 1440 px y a 375 px.
+- [x] En `/`, escribir "ser" deja solo SERPENTINA; elegir el chip SHOOTER deja solo INVASORES y ROCAS; una búsqueda sin coincidencias muestra "NO HAY RESULTADOS".
+- [x] Clicar una tarjeta o su botón JUGAR navega a `/games/<id>`.
+- [x] El enlace "Biblioteca" de la nav aparece activo en `/`, `/games/<id>` y `/games/<id>/play`; "Salón de la Fama" aparece activo en `/hall-of-fame`.
+- [x] Bajo 840 px se oculta la barra de enlaces, aparece el botón ≡ y el panel lateral abre y cierra (también al pulsar el fondo).
+- [x] `/games/no-existe` y `/games/no-existe/play` muestran la página 404 neón con enlace a la biblioteca.
+- [x] En el reproductor la puntuación sube sola; PAUSA la detiene y muestra "EN PAUSA"; REANUDAR la continúa.
+- [x] FIN abre el modal con la puntuación final; GUARDAR PUNTUACIÓN añade una entrada `{ game, score, name, at }` a `localStorage["av_scores"]` y muestra "▸ PUNTUACIÓN GUARDADA_".
+- [x] JUGAR DE NUEVO reinicia puntuación a 0, vidas a 3 y nivel a 01; SALIR vuelve a `/games/<id>`.
+- [x] En `/auth`, enviar con usuario "neonfox" guarda `{"name":"NEONFOX"}` en `av_user`, navega a `/` y la nav muestra "NEONFOX ▾".
+- [x] Clicar "NEONFOX ▾" borra `av_user` y la nav vuelve a mostrar "Iniciar Sesión".
+- [x] La sesión se conserva al recargar la página.
+- [x] En `/hall-of-fame` cada pestaña cambia podio y tabla; la fila "TU MEJOR MARCA" aparece solo con sesión iniciada y una puntuación guardada para ese juego, y muestra la mayor de ellas.
+- [x] Con `av_user` o `av_scores` corruptos en localStorage la app carga sin errores y actúa como si no existieran.
+- [x] `app/page.tsx` ya no contiene nada del starter de Next.js.
 
 ## Decisiones
 

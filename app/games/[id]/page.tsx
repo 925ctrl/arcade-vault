@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Leaderboard } from "@/components/leaderboard";
@@ -5,6 +6,12 @@ import { GAMES, getGame, seededScores } from "@/lib/games";
 
 export function generateStaticParams() {
   return GAMES.map((g) => ({ id: g.id }));
+}
+
+export async function generateMetadata({ params }: PageProps<"/games/[id]">): Promise<Metadata> {
+  const { id } = await params;
+  const game = getGame(id);
+  return { title: game ? `${game.title} · Arcade Vault` : "Arcade Vault" };
 }
 
 export default async function GameDetailPage({ params }: PageProps<"/games/[id]">) {
@@ -20,7 +27,7 @@ export default async function GameDetailPage({ params }: PageProps<"/games/[id]"
         <div className="detail-cover">
           <div className={"cover-bg " + game.cover}></div>
         </div>
-        <div style={{ marginTop: 20 }} className="detail-info">
+        <div className="detail-info mt-5">
           <div className="detail-tags">
             <span>{game.category}</span>
             <span>1 JUGADOR</span>
@@ -36,13 +43,13 @@ export default async function GameDetailPage({ params }: PageProps<"/games/[id]"
             </div>
             <div>
               <div className="l">Mejor global</div>
-              <div className="v" style={{ color: "var(--magenta)", textShadow: "0 0 6px rgba(255,0,110,0.5)" }}>
+              <div className="v text-magenta! [text-shadow:0_0_6px_rgba(255,0,110,0.5)]!">
                 {game.best.toLocaleString("es-ES")}
               </div>
             </div>
             <div>
               <div className="l">Dificultad</div>
-              <div className="v" style={{ color: "var(--yellow)", textShadow: "0 0 6px rgba(245,255,0,0.5)" }}>
+              <div className="v text-yellow! [text-shadow:0_0_6px_rgba(245,255,0,0.5)]!">
                 ★ ★ ★ ☆ ☆
               </div>
             </div>

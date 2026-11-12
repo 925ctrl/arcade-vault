@@ -53,7 +53,7 @@ export function Nav() {
 
       <div className={"av-mobile-backdrop" + (open ? " open" : "")} onClick={close}></div>
       <aside className={"av-mobile-panel" + (open ? " open" : "")}>
-        <div className="pixel neon-cyan" style={{ fontSize: 11, marginBottom: 16 }}>
+        <div className="pixel neon-cyan mb-4! text-[11px]!">
           MENÚ
         </div>
         <Link href="/" className={libraryActive ? "active" : ""} onClick={close}>
@@ -65,8 +65,8 @@ export function Nav() {
         <Link href="/auth" className={authActive ? "active" : ""} onClick={close}>
           {user ? "Cuenta" : "Iniciar Sesión"}
         </Link>
-        <div style={{ flex: 1 }}></div>
-        <div className="pixel" style={{ fontSize: 9, color: "var(--ink-faint)", letterSpacing: "0.16em" }}>
+        <div className="flex-1"></div>
+        <div className="pixel text-[9px]! tracking-[0.16em]! text-ink-faint!">
           CRÉDITOS · 03
         </div>
       </aside>

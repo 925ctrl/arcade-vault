@@ -34,7 +34,7 @@ export function HallOfFame() {
     <div className="av-hall fade-in">
       <div className="hall-head">
         <h1>SALÓN DE LA FAMA</h1>
-        <p className="pixel" style={{ fontSize: 10 }}>
+        <p className="pixel text-[10px]!">
           LOS NOMBRES QUE NUNCA SE BORRAN DE LA PANTALLA
         </p>
       </div>
@@ -59,12 +59,12 @@ export function HallOfFame() {
           <div className="date">{rows[1].date}</div>
         </div>
         <div className="podium-slot gold">
-          <div className="pixel" style={{ fontSize: 9, color: "var(--gold)", letterSpacing: "0.18em" }}>
+          <div className="pixel text-[9px]! tracking-[0.18em]! text-gold!">
             CAMPEÓN
           </div>
-          <div className="rank-num" style={{ fontSize: 36, marginTop: 4 }}>01</div>
+          <div className="rank-num mt-1! text-[36px]!">01</div>
           <div className="name">{rows[0].name}</div>
-          <div className="score" style={{ fontSize: 20 }}>{rows[0].score.toLocaleString("es-ES")}</div>
+          <div className="score text-[20px]!">{rows[0].score.toLocaleString("es-ES")}</div>
           <div className="date">{rows[0].date}</div>
         </div>
         <div className="podium-slot bronze">
@@ -98,11 +98,11 @@ export function HallOfFame() {
           <>
             <div className="tr you-label">▸ TU MEJOR MARCA EN {game.title}</div>
             <div className="tr you" style={{ animationDelay: `${rows.length * 50 + 50}ms` }}>
-              <div className="rk" style={{ color: "var(--yellow)" }}>
+              <div className="rk text-yellow!">
                 #{String(bestRank).padStart(2, "0")}
               </div>
-              <div className="pl" style={{ color: "var(--yellow)" }}>{user.name}</div>
-              <div className="sc" style={{ color: "var(--yellow)", textShadow: "0 0 6px rgba(245,255,0,0.5)" }}>
+              <div className="pl text-yellow!">{user.name}</div>
+              <div className="sc text-yellow! [text-shadow:0_0_6px_rgba(245,255,0,0.5)]!">
                 {best.score.toLocaleString("es-ES")}
               </div>
               <div className="dt">{formatDate(best.at)}</div>
@@ -111,7 +111,7 @@ export function HallOfFame() {
         )}
       </div>
 
-      <div style={{ textAlign: "center", marginTop: 32 }}>
+      <div className="mt-8 text-center">
         <Link href="/" className="btn lg">VOLVER A LA BIBLIOTECA</Link>
       </div>
     </div>
