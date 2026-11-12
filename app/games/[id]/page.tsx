@@ -56,7 +56,7 @@ export default async function GameDetailPage({ params }: PageProps<"/games/[id]"
           </div>
           <div className="detail-actions">
             <Link href={`/games/${game.id}/play`} className="btn xl pulse">
-              ▶&nbsp; JUGAR AHORA
+              ▶ JUGAR AHORA
             </Link>
             <Link href="/" className="btn ghost lg">
               VOLVER AL VAULT
