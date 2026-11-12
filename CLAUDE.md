@@ -6,6 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arcade Vault: an online platform to play retro arcade games and compete for high scores. UI copy is in Spanish. The project follows Spec Driven Design (`/spec` and `/spec-impl` skills from `Klerith/fernando-skills`, installed via `npx skills@latest add Klerith/fernando-skills`).
 
+## Skills
+Usa siempre /frontend-design para diseñar la interfaz del usuario
+
 ## Language conventions
 
 Chat replies are in Spanish. File names, identifiers and code in the project are in English, even though the prototype in `references/templates/` uses Spanish names (`biblioteca`, `salon`, `reproductor`). User-facing UI text stays in Spanish.
