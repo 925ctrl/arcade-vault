@@ -5,15 +5,6 @@ const SCORES_KEY = "av_scores";
 export type StoredUser = { name: string };
 export type SavedScore = { game: string; score: number; name: string; at: number };
 
-function readJSON(key: string): unknown {
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw === null ? null : JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
 function isStoredUser(v: unknown): v is StoredUser {
   return typeof v === "object" && v !== null && typeof (v as StoredUser).name === "string";
 }
@@ -72,9 +63,27 @@ export function writeUser(user: StoredUser | null): void {
   userListeners.forEach((l) => l());
 }
 
+export function parseScores(raw: string | null): SavedScore[] {
+  if (raw === null) return [];
+  try {
+    const v: unknown = JSON.parse(raw);
+    return Array.isArray(v) ? v.filter(isSavedScore) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Snapshot crudo (string estable) para useSyncExternalStore.
+export function getScoresSnapshot(): string | null {
+  try {
+    return window.localStorage.getItem(SCORES_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function readScores(): SavedScore[] {
-  const v = readJSON(SCORES_KEY);
-  return Array.isArray(v) ? v.filter(isSavedScore) : [];
+  return parseScores(getScoresSnapshot());
 }
 
 export function appendScore(score: SavedScore): void {
@@ -86,8 +95,8 @@ export function appendScore(score: SavedScore): void {
 }
 
 // Mayor puntuación guardada para un juego (de cualquier nombre), o null.
-export function bestScoreFor(gameId: string): SavedScore | null {
-  return readScores()
+export function bestScoreFor(scores: SavedScore[], gameId: string): SavedScore | null {
+  return scores
     .filter((s) => s.game === gameId)
     .reduce<SavedScore | null>((best, s) => (best && best.score >= s.score ? best : s), null);
 }
