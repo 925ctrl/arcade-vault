@@ -22,7 +22,7 @@ Hoy el sitio se publica como export estático en GitHub Pages (`output: "export"
 - Estados del formulario: edición, enviando, éxito y error.
 - Validación en cliente (campos vacíos → animación `shake`, como en el prototipo) y validación completa en servidor.
 - Campo honeypot oculto contra bots.
-- Pestaña "Acerca de" después de "Salón de la Fama", en la barra de escritorio y en el panel móvil.
+- Pestaña "Acerca de Nosotros" después de "Salón de la Fama", en la barra de escritorio y en el panel móvil.
 - Migración de hosting: quitar el export estático y `basePath`, y borrar el workflow de GitHub Pages.
 - `.env.example` versionado con las variables necesarias.
 - Mover `useReveal` de `components/home.tsx` a un hook compartido.
@@ -90,7 +90,7 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir có
 3. Portar a `app/globals.css` el bloque `ABOUT PAGE` (líneas 1071–1150) de `references/templates/home-about/styles.css`. No duplicar `.field`, `.kicker` ni `.reveal`, que ya existen.
 4. Crear `components/about.tsx` (client) con el hero, `HighlightIcon` y el divisor. Crear `app/about/page.tsx` con `metadata.title` "Acerca de · Arcade Vault".
 5. Añadir la sección de contacto con el formulario controlado y la validación cliente de campos vacíos con `shake`. Todavía sin envío.
-6. Añadir la pestaña "Acerca de" en `components/nav.tsx`, después de "Salón de la Fama", en la barra y en el panel móvil, activa solo en `/about`.
+6. Añadir la pestaña "Acerca de Nosotros" en `components/nav.tsx`, después de "Salón de la Fama", en la barra y en el panel móvil, activa solo en `/about`.
 7. Instalar `resend`. Crear `.env.example` con `RESEND_API_KEY` y `CONTACT_TO_EMAIL` vacías, y añadir `!.env.example` a `.gitignore`.
 8. Crear `app/about/actions.ts` con `"use server"` y `sendContactMessage`: honeypot, validación, lectura de variables de entorno y llamada a `resend.emails.send`.
 9. Conectar el formulario: el `onSubmit` llama a la acción dentro de `useTransition`. Mientras `isPending`, el botón está deshabilitado y muestra "ENVIANDO…".
@@ -104,8 +104,8 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir có
 - [ ] `next.config.ts` no contiene `output: "export"`, `basePath` ni `assetPrefix`, y `.github/workflows/deploy.yml` no existe.
 - [ ] La consola del navegador no muestra errores ni avisos de hidratación en `/about`.
 - [ ] `/about` muestra hero, tres tarjetas destacadas, divisor y sección de contacto. A 1440 px y a 375 px se ve igual que la pantalla Acerca de de `references/templates/home-about/arcade-vault-standalone.html`.
-- [ ] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, Acerca de, en escritorio y en el panel móvil.
-- [ ] "Acerca de" está activo solo en `/about`.
+- [ ] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, Acerca de Nosotros, en escritorio y en el panel móvil.
+- [ ] "Acerca de Nosotros" está activo solo en `/about`.
 - [ ] La home sigue animando sus secciones `.reveal` tras mover `useReveal`.
 - [ ] Enviar con algún campo vacío hace `shake` al formulario y no llama a la acción.
 - [ ] Mientras se envía, el botón dice "ENVIANDO…" y no se puede pulsar dos veces.
