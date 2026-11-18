@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, type FormEvent } from "react";
 import { useReveal } from "@/lib/use-reveal";
 
 type HighlightKind = "HEART" | "BROWSER" | "PLANT";
@@ -53,8 +54,30 @@ function HighlightIcon({ kind }: { kind: HighlightKind }) {
   );
 }
 
+type ContactForm = { name: string; email: string; message: string };
+
+const EMPTY_FORM: ContactForm = { name: "", email: "", message: "" };
+
 export function About() {
   useReveal();
+
+  const [form, setForm] = useState<ContactForm>(EMPTY_FORM);
+  const [shake, setShake] = useState(false);
+
+  useEffect(() => {
+    if (!shake) return;
+    const t = setTimeout(() => setShake(false), 400);
+    return () => clearTimeout(t);
+  }, [shake]);
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      setShake(true);
+      return;
+    }
+    // El envío se conecta en el paso 9.
+  };
 
   return (
     <div className="about fade-in">
@@ -90,6 +113,62 @@ export function About() {
         </div>
         <div className="div-bar" />
       </div>
+
+      <section className="about-contact reveal">
+        <div className="contact-grid">
+          <div className="contact-intro">
+            <div className="kicker pixel neon-cyan">▸ CONTACTO</div>
+            <h2 className="contact-title">CONTÁCTANOS</h2>
+            <p className="contact-sub">
+              ¿Tienes alguna sugerencia, quieres proponer un juego, o simplemente quieres saludar?
+              Escríbenos.
+            </p>
+            <div className="contact-tips">
+              <div className="tip"><span className="tip-led" />RESPUESTA EN 24-48H</div>
+              <div className="tip"><span className="tip-led y" />SUGERENCIAS BIENVENIDAS</div>
+              <div className="tip"><span className="tip-led m" />SIN SPAM, JAMÁS</div>
+            </div>
+          </div>
+
+          <form className={`contact-form${shake ? " shake" : ""}`} onSubmit={onSubmit}>
+            <div className="field">
+              <label htmlFor="contact-name">NOMBRE</label>
+              <input
+                id="contact-name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="px_kai"
+                maxLength={60}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="contact-email">CORREO ELECTRÓNICO</label>
+              <input
+                id="contact-email"
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="jugador@vault.gg"
+                maxLength={254}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="contact-message">MENSAJE</label>
+              <textarea
+                id="contact-message"
+                rows={5}
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                placeholder="Cuéntanos qué tienes en mente…"
+                maxLength={2000}
+              />
+            </div>
+            <button className="btn xl press" type="submit" style={{ width: "100%" }}>
+              ▶  ENVIAR MENSAJE
+            </button>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }
