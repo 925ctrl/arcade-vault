@@ -7,10 +7,12 @@ import { useUser } from "@/components/user-provider";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  // trailingSlash: true hace que pathname llegue como "/library/"; se normaliza para comparar.
+  const pathname = usePathname().replace(/\/$/, "") || "/";
   const { user, signOut } = useUser();
 
-  const libraryActive = pathname === "/" || pathname.startsWith("/games/");
+  const homeActive = pathname === "/";
+  const libraryActive = pathname === "/library" || pathname.startsWith("/games/");
   const hallActive = pathname === "/hall-of-fame";
   const authActive = pathname === "/auth";
   const close = () => setOpen(false);
@@ -25,7 +27,10 @@ export function Nav() {
           </div>
         </Link>
         <div className="links">
-          <Link href="/" className={libraryActive ? "active" : ""}>
+          <Link href="/" className={homeActive ? "active" : ""}>
+            Inicio
+          </Link>
+          <Link href="/library" className={libraryActive ? "active" : ""}>
             Biblioteca
           </Link>
           <Link href="/hall-of-fame" className={hallActive ? "active" : ""}>
@@ -56,7 +61,10 @@ export function Nav() {
         <div className="pixel neon-cyan mb-4! text-[11px]!">
           MENÚ
         </div>
-        <Link href="/" className={libraryActive ? "active" : ""} onClick={close}>
+        <Link href="/" className={homeActive ? "active" : ""} onClick={close}>
+          Inicio
+        </Link>
+        <Link href="/library" className={libraryActive ? "active" : ""} onClick={close}>
           Biblioteca
         </Link>
         <Link href="/hall-of-fame" className={hallActive ? "active" : ""} onClick={close}>

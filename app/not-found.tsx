@@ -17,7 +17,7 @@ export default function NotFound() {
       <div className="sub mt-4!">
         ESTA PÁGINA NO EXISTE EN EL VAULT <span className="blink">_</span>
       </div>
-      <Link href="/" className="btn mt-8!">
+      <Link href="/library" className="btn mt-8!">
         VOLVER AL VAULT
       </Link>
     </section>
