@@ -1,6 +1,6 @@
 # SPEC 02 — Página Inicio: landing del prototipo y pestaña en la nav
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-11-18
 > **Objetivo:** Añadir una página Inicio en `/` portada desde `references/templates/home-about/home.jsx`, con su pestaña "Inicio" antes de "Biblioteca" en la nav, y mover la Biblioteca a `/library`.
@@ -76,19 +76,19 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir com
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] La consola del navegador no muestra errores ni avisos de hidratación en `/` ni en `/library`.
-- [ ] `/` muestra la página Inicio con las siete secciones (hero, 01, 02, stats, 03, 04, CTA final). A 1440 px y a 375 px se ve igual que la pantalla Inicio de `references/templates/home-about/arcade-vault-standalone.html`.
-- [ ] Las secciones con `.reveal` aparecen ocultas y se animan a visibles al entrar en pantalla con el scroll.
-- [ ] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, tanto en escritorio como en el panel móvil.
-- [ ] "Inicio" está activo solo en `/`. "Biblioteca" está activo en `/library`, `/games/<id>` y `/games/<id>/play`. Ninguno de los dos está activo en `/hall-of-fame` ni en `/auth`.
-- [ ] Clicar el logo navega a `/`.
-- [ ] `/library` muestra la biblioteca con el mismo buscador, chips y tarjetas que antes tenía `/`.
-- [ ] EXPLORAR JUEGOS, VER TODOS LOS JUEGOS e INSERTAR MONEDA navegan a `/library`. CREAR CUENTA y EMPEZAR GRATIS navegan a `/auth`. VER SALÓN navega a `/hall-of-fame`.
-- [ ] El rail muestra exactamente 6 mini cards (los 6 primeros de `GAMES`) y clicar una navega a `/games/<id>`.
-- [ ] El primer stat muestra "8+" (igual a `GAMES.length`) y ningún texto de la home menciona Arkanoid, Tetris ni Snake.
-- [ ] VOLVER AL VAULT (detalle y modal del reproductor), VOLVER A LA BIBLIOTECA (salón) y el enlace de la 404 navegan a `/library`.
-- [ ] Con el build de producción (`basePath` `/arcade-vault`), `/arcade-vault/` muestra Inicio y `/arcade-vault/library/` muestra la biblioteca.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] La consola del navegador no muestra errores ni avisos de hidratación en `/` ni en `/library`.
+- [x] `/` muestra la página Inicio con las siete secciones (hero, 01, 02, stats, 03, 04, CTA final). A 1440 px y a 375 px se ve igual que la pantalla Inicio de `references/templates/home-about/arcade-vault-standalone.html`.
+- [x] Las secciones con `.reveal` aparecen ocultas y se animan a visibles al entrar en pantalla con el scroll.
+- [x] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, tanto en escritorio como en el panel móvil.
+- [x] "Inicio" está activo solo en `/`. "Biblioteca" está activo en `/library`, `/games/<id>` y `/games/<id>/play`. Ninguno de los dos está activo en `/hall-of-fame` ni en `/auth`.
+- [x] Clicar el logo navega a `/`.
+- [x] `/library` muestra la biblioteca con el mismo buscador, chips y tarjetas que antes tenía `/`.
+- [x] EXPLORAR JUEGOS, VER TODOS LOS JUEGOS e INSERTAR MONEDA navegan a `/library`. CREAR CUENTA y EMPEZAR GRATIS navegan a `/auth`. VER SALÓN navega a `/hall-of-fame`.
+- [x] El rail muestra exactamente 6 mini cards (los 6 primeros de `GAMES`) y clicar una navega a `/games/<id>`.
+- [x] El primer stat muestra "8+" (igual a `GAMES.length`) y ningún texto de la home menciona Arkanoid, Tetris ni Snake.
+- [x] VOLVER AL VAULT (detalle y modal del reproductor), VOLVER A LA BIBLIOTECA (salón) y el enlace de la 404 navegan a `/library`.
+- [x] Con el build de producción (`basePath` `/arcade-vault`), `/arcade-vault/` muestra Inicio y `/arcade-vault/library/` muestra la biblioteca.
 
 ## Decisiones
 
