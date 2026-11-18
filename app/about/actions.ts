@@ -1,6 +1,7 @@
 "use server";
 
 import { Resend } from "resend";
+import { GENERIC_CONTACT_ERROR } from "@/lib/contact";
 
 export type ContactInput = {
   name: string; // obligatorio, 1–60 caracteres tras trim
@@ -14,7 +15,6 @@ export type ContactResult =
   | { status: "error"; message: string }; // texto en español para la terminal
 
 const FROM = "Arcade Vault <onboarding@resend.dev>";
-const GENERIC_ERROR = "NO SE PUDO ENVIAR EL MENSAJE. INTÉNTALO DE NUEVO.";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function fail(message: string): ContactResult {
@@ -45,7 +45,7 @@ export async function sendContactMessage(input: ContactInput): Promise<ContactRe
   const to = process.env.CONTACT_TO_EMAIL;
   if (!apiKey || !to) {
     console.error("[contact] Falta RESEND_API_KEY o CONTACT_TO_EMAIL en el entorno.");
-    return fail(GENERIC_ERROR);
+    return fail(GENERIC_CONTACT_ERROR);
   }
 
   try {
@@ -58,11 +58,11 @@ export async function sendContactMessage(input: ContactInput): Promise<ContactRe
     });
     if (error) {
       console.error("[contact] Resend devolvió un error:", error);
-      return fail(GENERIC_ERROR);
+      return fail(GENERIC_CONTACT_ERROR);
     }
   } catch (err) {
     console.error("[contact] Fallo al llamar a Resend:", err);
-    return fail(GENERIC_ERROR);
+    return fail(GENERIC_CONTACT_ERROR);
   }
 
   return { status: "success", name };

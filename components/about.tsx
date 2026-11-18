@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useTransition, type FormEvent } from "react";
-import { sendContactMessage, type ContactResult } from "@/app/about/actions";
+import { sendContactMessage, type ContactInput, type ContactResult } from "@/app/about/actions";
+import { GENERIC_CONTACT_ERROR } from "@/lib/contact";
 import { useReveal } from "@/lib/use-reveal";
 
 type HighlightKind = "HEART" | "BROWSER" | "PLANT";
@@ -55,9 +56,9 @@ function HighlightIcon({ kind }: { kind: HighlightKind }) {
   );
 }
 
-type ContactForm = { name: string; email: string; message: string };
+type ContactForm = ContactInput;
 
-const EMPTY_FORM: ContactForm = { name: "", email: "", message: "" };
+const EMPTY_FORM: ContactForm = { name: "", email: "", message: "", website: "" };
 
 export function About() {
   useReveal();
@@ -65,7 +66,7 @@ export function About() {
   const [form, setForm] = useState<ContactForm>(EMPTY_FORM);
   const [shake, setShake] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [, setResult] = useState<ContactResult | null>(null); // se muestra en los pasos 10 y 11
+  const [result, setResult] = useState<ContactResult | null>(null);
 
   useEffect(() => {
     if (!shake) return;
@@ -80,9 +81,13 @@ export function About() {
       return;
     }
     startTransition(async () => {
-      setResult(await sendContactMessage({ ...form, website: "" }));
+      setResult(await sendContactMessage(form));
     });
   };
+
+  // Líneas [OK] hasta el paso que falla: validación de datos → 1; envío → 2; éxito → 3.
+  const okLines =
+    result?.status === "success" ? 3 : result?.message === GENERIC_CONTACT_ERROR ? 2 : 1;
 
   return (
     <div className="about fade-in">
@@ -136,46 +141,98 @@ export function About() {
           </div>
 
           <form className={`contact-form${shake ? " shake" : ""}`} onSubmit={onSubmit}>
-            <div className="field">
-              <label htmlFor="contact-name">NOMBRE</label>
-              <input
-                id="contact-name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="px_kai"
-                maxLength={60}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="contact-email">CORREO ELECTRÓNICO</label>
-              <input
-                id="contact-email"
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="jugador@vault.gg"
-                maxLength={254}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="contact-message">MENSAJE</label>
-              <textarea
-                id="contact-message"
-                rows={5}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="Cuéntanos qué tienes en mente…"
-                maxLength={2000}
-              />
-            </div>
-            <button
-              className="btn xl press"
-              type="submit"
-              style={{ width: "100%" }}
-              disabled={isPending}
-            >
-              {isPending ? "ENVIANDO…" : "▶  ENVIAR MENSAJE"}
-            </button>
+            {result ? (
+              <div className="terminal-success">
+                <div className="term-bar">
+                  <span className="dot r" /><span className="dot y" /><span className="dot g" />
+                  <span className="term-title">VAULT-OS // TERMINAL</span>
+                </div>
+                <div className="term-body">
+                  <div className="line">
+                    <span className="prompt">vault@arcade:~$</span> ./send_message --to=team
+                  </div>
+                  <div className="line dim">[OK] Conectando con servidor…</div>
+                  {okLines >= 2 && <div className="line dim">[OK] Validando contenido…</div>}
+                  {okLines >= 3 && <div className="line dim">[OK] Transmitiendo paquete…</div>}
+                  {result.status === "success" ? (
+                    <div className="line success" role="status">
+                      &gt; MENSAJE RECIBIDO. TE RESPONDEREMOS PRONTO. GRACIAS, {result.name.toUpperCase()}.
+                      <span className="caret">_</span>
+                    </div>
+                  ) : (
+                    <div className="line err" role="alert">
+                      [ERR] {result.message}
+                      <span className="caret">_</span>
+                    </div>
+                  )}
+                  <div style={{ marginTop: 18 }}>
+                    <button
+                      className="btn ghost"
+                      type="button"
+                      onClick={() => {
+                        setResult(null);
+                        if (result.status === "success") setForm(EMPTY_FORM);
+                      }}
+                    >
+                      {result.status === "success" ? "ENVIAR OTRO MENSAJE" : "REINTENTAR"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  name="website"
+                  value={form.website}
+                  onChange={(e) => setForm({ ...form, website: e.target.value })}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
+              <div className="field">
+                <label htmlFor="contact-name">NOMBRE</label>
+                <input
+                  id="contact-name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="px_kai"
+                  maxLength={60}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="contact-email">CORREO ELECTRÓNICO</label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="jugador@vault.gg"
+                  maxLength={254}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="contact-message">MENSAJE</label>
+                <textarea
+                  id="contact-message"
+                  rows={5}
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  placeholder="Cuéntanos qué tienes en mente…"
+                  maxLength={2000}
+                />
+              </div>
+              <button
+                className="btn xl press"
+                type="submit"
+                style={{ width: "100%" }}
+                disabled={isPending}
+              >
+                {isPending ? "ENVIANDO…" : "▶  ENVIAR MENSAJE"}
+              </button>
+              </>
+            )}
           </form>
         </div>
       </section>

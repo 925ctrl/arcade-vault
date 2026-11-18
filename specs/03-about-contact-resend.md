@@ -1,6 +1,6 @@
 # SPEC 03 — Página Acerca de con formulario de contacto vía Resend
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-11-18
 > **Objetivo:** Añadir la página "Acerca de" en `/about`, portada desde `references/templates/home-about/about.jsx`, con su pestaña en la nav y un formulario de contacto que envía el mensaje por correo con Resend desde una Server Action.
@@ -100,23 +100,23 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir có
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] `next.config.ts` no contiene `output: "export"`, `basePath` ni `assetPrefix`, y `.github/workflows/deploy.yml` no existe.
-- [ ] La consola del navegador no muestra errores ni avisos de hidratación en `/about`.
-- [ ] `/about` muestra hero, tres tarjetas destacadas, divisor y sección de contacto. A 1440 px y a 375 px se ve igual que la pantalla Acerca de de `references/templates/home-about/arcade-vault-standalone.html`.
-- [ ] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, Acerca de Nosotros, en escritorio y en el panel móvil.
-- [ ] "Acerca de Nosotros" está activo solo en `/about`.
-- [ ] La home sigue animando sus secciones `.reveal` tras mover `useReveal`.
-- [ ] Enviar con algún campo vacío hace `shake` al formulario y no llama a la acción.
-- [ ] Mientras se envía, el botón dice "ENVIANDO…" y no se puede pulsar dos veces.
-- [ ] Con `RESEND_API_KEY` y `CONTACT_TO_EMAIL` válidas, enviar el formulario hace llegar un correo a `CONTACT_TO_EMAIL` con el asunto `[Arcade Vault] Mensaje de <nombre>` y reply-to igual al email escrito.
-- [ ] Tras un envío correcto se ve la terminal de éxito con el nombre en mayúsculas. ENVIAR OTRO MENSAJE muestra el formulario vacío.
-- [ ] Un mensaje de menos de 10 caracteres devuelve la terminal de error con el motivo y no envía correo.
-- [ ] Con `RESEND_API_KEY` vacía, el envío muestra la terminal de error genérica y el servidor registra el motivo.
-- [ ] REINTENTAR vuelve al formulario con nombre, email y mensaje intactos.
-- [ ] Rellenar el honeypot (desde DevTools) muestra éxito y no llega ningún correo.
-- [ ] El texto `RESEND_API_KEY` y el valor de la key no aparecen en ningún archivo de `.next/static/`.
-- [ ] `.env.example` está versionado y ningún `.env.local` lo está.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] `next.config.ts` no contiene `output: "export"`, `basePath` ni `assetPrefix`, y `.github/workflows/deploy.yml` no existe.
+- [x] La consola del navegador no muestra errores ni avisos de hidratación en `/about`.
+- [x] `/about` muestra hero, tres tarjetas destacadas, divisor y sección de contacto. A 1440 px y a 375 px se ve igual que la pantalla Acerca de de `references/templates/home-about/arcade-vault-standalone.html`.
+- [x] La nav muestra, en este orden: Inicio, Biblioteca, Salón de la Fama, Acerca de Nosotros, en escritorio y en el panel móvil.
+- [x] "Acerca de Nosotros" está activo solo en `/about`.
+- [x] La home sigue animando sus secciones `.reveal` tras mover `useReveal`.
+- [x] Enviar con algún campo vacío hace `shake` al formulario y no llama a la acción.
+- [x] Mientras se envía, el botón dice "ENVIANDO…" y no se puede pulsar dos veces.
+- [x] Con `RESEND_API_KEY` y `CONTACT_TO_EMAIL` válidas, enviar el formulario hace llegar un correo a `CONTACT_TO_EMAIL` con el asunto `[Arcade Vault] Mensaje de <nombre>` y reply-to igual al email escrito.
+- [x] Tras un envío correcto se ve la terminal de éxito con el nombre en mayúsculas. ENVIAR OTRO MENSAJE muestra el formulario vacío.
+- [x] Un mensaje de menos de 10 caracteres devuelve la terminal de error con el motivo y no envía correo.
+- [x] Con `RESEND_API_KEY` vacía, el envío muestra la terminal de error genérica y el servidor registra el motivo.
+- [x] REINTENTAR vuelve al formulario con nombre, email y mensaje intactos.
+- [x] Rellenar el honeypot (desde DevTools) muestra éxito y no llega ningún correo.
+- [x] El texto `RESEND_API_KEY` y el valor de la key no aparecen en ningún archivo de `.next/static/`.
+- [x] `.env.example` está versionado y ningún `.env.local` lo está.
 
 ## Decisiones
 
