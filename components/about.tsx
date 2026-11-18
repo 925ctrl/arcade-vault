@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { sendContactMessage, type ContactResult } from "@/app/about/actions";
 import { useReveal } from "@/lib/use-reveal";
 
 type HighlightKind = "HEART" | "BROWSER" | "PLANT";
@@ -63,6 +64,8 @@ export function About() {
 
   const [form, setForm] = useState<ContactForm>(EMPTY_FORM);
   const [shake, setShake] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [, setResult] = useState<ContactResult | null>(null); // se muestra en los pasos 10 y 11
 
   useEffect(() => {
     if (!shake) return;
@@ -76,7 +79,9 @@ export function About() {
       setShake(true);
       return;
     }
-    // El envío se conecta en el paso 9.
+    startTransition(async () => {
+      setResult(await sendContactMessage({ ...form, website: "" }));
+    });
   };
 
   return (
@@ -163,8 +168,13 @@ export function About() {
                 maxLength={2000}
               />
             </div>
-            <button className="btn xl press" type="submit" style={{ width: "100%" }}>
-              ▶  ENVIAR MENSAJE
+            <button
+              className="btn xl press"
+              type="submit"
+              style={{ width: "100%" }}
+              disabled={isPending}
+            >
+              {isPending ? "ENVIANDO…" : "▶  ENVIAR MENSAJE"}
             </button>
           </form>
         </div>
