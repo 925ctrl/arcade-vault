@@ -1,0 +1,6 @@
+.next/
+out/
+build/
+references/
+package-lock.json
+next-env.d.ts
