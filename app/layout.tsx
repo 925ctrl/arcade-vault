@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Courier_Prime, JetBrains_Mono, Press_Start_2P } from "next/font/google";
+import { Suspense } from "react";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { UserProvider } from "@/components/user-provider";
+import { getSessionUser } from "@/lib/supabase/session";
 import "./globals.css";
 
 const pressStart2P = Press_Start_2P({
@@ -28,6 +30,17 @@ export const metadata: Metadata = {
   description: "Juega clásicos arcade retro y compite por los mejores puntajes.",
 };
 
+async function SessionShell({ children }: { children: React.ReactNode }) {
+  const user = await getSessionUser();
+  return (
+    <UserProvider user={user}>
+      <Nav />
+      <main className="av-main">{children}</main>
+      <Footer />
+    </UserProvider>
+  );
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -38,11 +51,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <div className="av-bg" />
         <div className="av-noise" />
         <div id="root">
-          <UserProvider>
-            <Nav />
-            <main className="av-main">{children}</main>
-            <Footer />
-          </UserProvider>
+          <Suspense fallback={null}>
+            <SessionShell>{children}</SessionShell>
+          </Suspense>
         </div>
       </body>
     </html>

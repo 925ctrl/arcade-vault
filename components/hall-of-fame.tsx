@@ -101,7 +101,7 @@ export function HallOfFame() {
               <div className="rk text-yellow!">
                 #{String(bestRank).padStart(2, "0")}
               </div>
-              <div className="pl text-yellow!">{user.name}</div>
+              <div className="pl text-yellow!">{user.username}</div>
               <div className="sc text-yellow! [text-shadow:0_0_6px_rgba(245,255,0,0.5)]!">
                 {best.score.toLocaleString("es-ES")}
               </div>
