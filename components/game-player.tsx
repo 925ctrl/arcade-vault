@@ -18,7 +18,7 @@ export function GamePlayer({ game }: { game: Game }) {
   const [saved, setSaved] = useState(false);
 
   const level = 1 + Math.floor(score / POINTS_PER_LEVEL);
-  const name = editedName ?? user?.name ?? "INVITADO";
+  const name = editedName ?? user?.username ?? "INVITADO";
 
   const saveScore = () => {
     appendScore({ game: game.id, score, name, at: Date.now() });

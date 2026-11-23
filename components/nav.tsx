@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { signOut } from "@/app/auth/actions";
 import { useUser } from "@/components/user-provider";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   // trailingSlash: true hace que pathname llegue como "/library/"; se normaliza para comparar.
   const pathname = usePathname().replace(/\/$/, "") || "/";
-  const { user, signOut } = useUser();
+  const { user } = useUser();
 
   const homeActive = pathname === "/";
   const libraryActive = pathname === "/library" || pathname.startsWith("/games/");
@@ -17,6 +19,13 @@ export function Nav() {
   const aboutActive = pathname === "/about";
   const authActive = pathname === "/auth";
   const close = () => setOpen(false);
+
+  const handleSignOut = () => {
+    close();
+    startTransition(async () => {
+      await signOut();
+    });
+  };
 
   return (
     <>
@@ -47,8 +56,13 @@ export function Nav() {
           <span>CRÉDITOS · 03</span>
         </div>
         {user ? (
-          <button className="btn ghost auth-btn" onClick={signOut}>
-            {user.name} ▾
+          <button
+            className="btn ghost auth-btn"
+            type="button"
+            disabled={isPending}
+            onClick={handleSignOut}
+          >
+            {user.username} ▾
           </button>
         ) : (
           <Link href="/auth" className="btn auth-btn">
@@ -77,9 +91,20 @@ export function Nav() {
         <Link href="/about" className={aboutActive ? "active" : ""} onClick={close}>
           Acerca de Nosotros
         </Link>
-        <Link href="/auth" className={authActive ? "active" : ""} onClick={close}>
-          {user ? "Cuenta" : "Iniciar Sesión"}
-        </Link>
+        {user ? (
+          <button
+            type="button"
+            className="mobile-signout"
+            disabled={isPending}
+            onClick={handleSignOut}
+          >
+            {user.username} · Salir
+          </button>
+        ) : (
+          <Link href="/auth" className={authActive ? "active" : ""} onClick={close}>
+            Iniciar Sesión
+          </Link>
+        )}
         <div className="flex-1"></div>
         <div className="pixel text-[9px]! tracking-[0.16em]! text-ink-faint!">
           CRÉDITOS · 03
