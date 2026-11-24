@@ -1,6 +1,6 @@
 # SPEC 06 — Puntuaciones en Supabase: récord y partidas por jugador, rankings reales
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 04, SPEC 05
 > **Fecha:** 2026-11-23
 > **Objetivo:** Guardar automáticamente en Supabase un único registro por jugador y juego (`max_score`, `games_played`), y mostrar desde la base de datos los rankings de `/games/[id]` y `/hall-of-fame`, el "Mejor global", el contador de partidas y el récord de las tarjetas de la librería, eliminando todos los datos mock de puntuación.
@@ -299,36 +299,36 @@ Cada paso deja `npm run dev` y `npm run lint` funcionando. Antes de escribir có
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] La consola del navegador no muestra errores ni avisos de hidratación en `/library`, `/games/rocas`, `/games/rocas/play`, `/games/caida` y `/hall-of-fame`.
-- [ ] `list_migrations` muestra la migración de `player_stats` aplicada en el remoto, y `supabase/migrations/` la contiene.
-- [ ] `player_stats` tiene RLS activado, y `get_advisors` (security) no reporta avisos sobre `player_stats`, `start_game`, `submit_score`, `leaderboard` ni `game_stats`.
-- [ ] `lib/supabase/database.types.ts` contiene `player_stats`, `leaderboard`, `game_stats`, `start_game` y `submit_score`.
-- [ ] El reproductor no muestra el botón GUARDAR PUNTUACIÓN.
-- [ ] Con sesión y sin registro previo, pulsar `Espacio` en `/games/rocas/play` crea una fila en `player_stats` con `game_id = 'rocas'`, `games_played = 1` y `max_score = 0`.
-- [ ] Cada nueva partida empezada suma exactamente 1 a `games_played` de esa fila. Pausar, reanudar o perder una vida no suma.
-- [ ] Tras varias partidas, `player_stats` tiene una sola fila para ese usuario y `rocas`.
-- [ ] Terminar con una puntuación mayor que el récord muestra "GUARDANDO…" y luego "▸ ¡NUEVO RÉCORD! PUNTUACIÓN GUARDADA_", y `max_score` pasa a ser esa puntuación.
-- [ ] Terminar con una puntuación menor o igual que el récord en caché muestra "▸ LÁSTIMA, NO SUPERASTE TU RÉCORD", no cambia `max_score` y no hace ninguna petición a `submitScore` (pestaña Network).
-- [ ] Con `av_best` borrado de `localStorage` y una puntuación menor que el récord de la BD, se llama a `submitScore`, se muestra "▸ LÁSTIMA, NO SUPERASTE TU RÉCORD", `max_score` no cambia y `av_best` queda con el récord de la BD.
-- [ ] Pulsar FIN en la pantalla de inicio no suma partidas ni llama a `submitScore`.
-- [ ] Sin sesión, jugar una partida no crea ni modifica filas en `player_stats`.
-- [ ] Llamar a `submitScore` con `-1`, `1.5`, `10000000` o `game_id = 'caida'` devuelve "PUNTUACIÓN NO VÁLIDA." y no modifica nada.
-- [ ] Un `update` o `insert` directo en `player_stats` con la publishable key y una sesión es rechazado por RLS, y `start_game` / `submit_score` sin sesión fallan.
-- [ ] Tras un nuevo récord, `/games/rocas` y `/hall-of-fame` (pestaña ROCAS) lo muestran sin reiniciar el servidor.
-- [ ] Con dos jugadores empatados en `max_score`, aparece primero el que lo consiguió antes.
-- [ ] Un jugador con `max_score = 0` no aparece en el ranking.
-- [ ] El leaderboard de `/games/rocas` muestra como máximo 10 filas, y la tabla del salón como máximo 12, ordenadas de mayor a menor.
-- [ ] En `/hall-of-fame` (pestaña ROCAS) y en `/games/rocas`, "TU MEJOR MARCA EN ROCAS" muestra el username, el `max_score` y la fecha del récord, sin número de posición.
-- [ ] Un jugador con récord fuera del top (puesto 13 o más en el salón, 11 o más en el detalle) ve igualmente "TU MEJOR MARCA" debajo de la lista.
-- [ ] Sin sesión, o sin récord en ese juego, ni el salón ni el detalle muestran "TU MEJOR MARCA".
-- [ ] Con el guardado fallando (por ejemplo, red desconectada en DevTools), el modal muestra `[ERR]` y REINTENTAR GUARDADO. Al restaurar la red y pulsarlo, muestra "GUARDANDO…" y luego el resultado, y `max_score` queda actualizado si era récord.
-- [ ] "Mejor global" de `/games/rocas` y "MEJOR PUNTUACIÓN" de la tarjeta de ROCAS coinciden con el `#01` del leaderboard.
-- [ ] "Partidas" de `/games/rocas` coincide con `select sum(games_played) from player_stats where game_id = 'rocas'` (con hasta un minuto de retraso), con el formato de `formatPlays`.
-- [ ] `/games/caida` muestra "SIN PUNTUACIONES TODAVÍA", "Mejor global" `—` y "Partidas" `0`. Su tarjeta muestra `—`.
-- [ ] La pestaña CAÍDA del salón muestra el podio con `---` y "SIN PUNTUACIONES TODAVÍA".
-- [ ] Con `NEXT_PUBLIC_SUPABASE_URL` vacía, el detalle y el salón muestran "[ERR] NO SE PUDO CARGAR EL RANKING." y el servidor registra el motivo.
-- [ ] El repo no contiene `seededScores`, `av_scores` ni `appendScore`, y `Game` no tiene `best` ni `plays`.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] La consola del navegador no muestra errores ni avisos de hidratación en `/library`, `/games/rocas`, `/games/rocas/play`, `/games/caida` y `/hall-of-fame`.
+- [x] `list_migrations` muestra la migración de `player_stats` aplicada en el remoto, y `supabase/migrations/` la contiene.
+- [x] `player_stats` tiene RLS activado, y `get_advisors` (security) no reporta avisos sobre `player_stats`, `start_game`, `submit_score`, `leaderboard` ni `game_stats`.
+- [x] `lib/supabase/database.types.ts` contiene `player_stats`, `leaderboard`, `game_stats`, `start_game` y `submit_score`.
+- [x] El reproductor no muestra el botón GUARDAR PUNTUACIÓN.
+- [x] Con sesión y sin registro previo, pulsar `Espacio` en `/games/rocas/play` crea una fila en `player_stats` con `game_id = 'rocas'`, `games_played = 1` y `max_score = 0`.
+- [x] Cada nueva partida empezada suma exactamente 1 a `games_played` de esa fila. Pausar, reanudar o perder una vida no suma.
+- [x] Tras varias partidas, `player_stats` tiene una sola fila para ese usuario y `rocas`.
+- [x] Terminar con una puntuación mayor que el récord muestra "GUARDANDO…" y luego "▸ ¡NUEVO RÉCORD! PUNTUACIÓN GUARDADA_", y `max_score` pasa a ser esa puntuación.
+- [x] Terminar con una puntuación menor o igual que el récord en caché muestra "▸ LÁSTIMA, NO SUPERASTE TU RÉCORD", no cambia `max_score` y no hace ninguna petición a `submitScore` (pestaña Network).
+- [x] Con `av_best` borrado de `localStorage` y una puntuación menor que el récord de la BD, se llama a `submitScore`, se muestra "▸ LÁSTIMA, NO SUPERASTE TU RÉCORD", `max_score` no cambia y `av_best` queda con el récord de la BD.
+- [x] Pulsar FIN en la pantalla de inicio no suma partidas ni llama a `submitScore`.
+- [x] Sin sesión, jugar una partida no crea ni modifica filas en `player_stats`.
+- [x] Llamar a `submitScore` con `-1`, `1.5`, `10000000` o `game_id = 'caida'` devuelve "PUNTUACIÓN NO VÁLIDA." y no modifica nada.
+- [x] Un `update` o `insert` directo en `player_stats` con la publishable key y una sesión es rechazado por RLS, y `start_game` / `submit_score` sin sesión fallan.
+- [x] Tras un nuevo récord, `/games/rocas` y `/hall-of-fame` (pestaña ROCAS) lo muestran sin reiniciar el servidor.
+- [x] Con dos jugadores empatados en `max_score`, aparece primero el que lo consiguió antes.
+- [x] Un jugador con `max_score = 0` no aparece en el ranking.
+- [x] El leaderboard de `/games/rocas` muestra como máximo 10 filas, y la tabla del salón como máximo 12, ordenadas de mayor a menor.
+- [x] En `/hall-of-fame` (pestaña ROCAS) y en `/games/rocas`, "TU MEJOR MARCA EN ROCAS" muestra el username, el `max_score` y la fecha del récord, sin número de posición.
+- [x] Un jugador con récord fuera del top (puesto 13 o más en el salón, 11 o más en el detalle) ve igualmente "TU MEJOR MARCA" debajo de la lista.
+- [x] Sin sesión, o sin récord en ese juego, ni el salón ni el detalle muestran "TU MEJOR MARCA".
+- [x] Con el guardado fallando (por ejemplo, red desconectada en DevTools), el modal muestra `[ERR]` y REINTENTAR GUARDADO. Al restaurar la red y pulsarlo, muestra "GUARDANDO…" y luego el resultado, y `max_score` queda actualizado si era récord.
+- [x] "Mejor global" de `/games/rocas` y "MEJOR PUNTUACIÓN" de la tarjeta de ROCAS coinciden con el `#01` del leaderboard.
+- [x] "Partidas" de `/games/rocas` coincide con `select sum(games_played) from player_stats where game_id = 'rocas'` (con hasta un minuto de retraso), con el formato de `formatPlays`.
+- [x] `/games/caida` muestra "SIN PUNTUACIONES TODAVÍA", "Mejor global" `—` y "Partidas" `0`. Su tarjeta muestra `—`.
+- [x] La pestaña CAÍDA del salón muestra el podio con `---` y "SIN PUNTUACIONES TODAVÍA".
+- [x] Con `NEXT_PUBLIC_SUPABASE_URL` vacía, el detalle y el salón muestran "[ERR] NO SE PUDO CARGAR EL RANKING." y el servidor registra el motivo.
+- [x] El repo no contiene `seededScores`, `av_scores` ni `appendScore`, y `Game` no tiene `best` ni `plays`.
 
 ## Decisiones
 
