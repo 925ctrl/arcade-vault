@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ComingSoon } from "@/components/coming-soon";
 import { GamePlayer } from "@/components/game-player";
 import { GAMES, getGame } from "@/lib/games";
 
@@ -18,5 +19,5 @@ export default async function PlayPage({ params }: PageProps<"/games/[id]/play">
   const game = getGame(id);
   if (!game) notFound();
 
-  return <GamePlayer game={game} />;
+  return game.playable ? <GamePlayer game={game} /> : <ComingSoon game={game} />;
 }

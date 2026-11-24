@@ -11,6 +11,7 @@ export type Game = {
   color: GameColor;
   best: number;
   plays: string;
+  playable: boolean;
 };
 
 export const GAMES: Game[] = [
@@ -24,6 +25,7 @@ export const GAMES: Game[] = [
     color: "cyan",
     best: 28450,
     plays: "12.4K",
+    playable: false,
   },
   {
     id: "caida",
@@ -35,6 +37,7 @@ export const GAMES: Game[] = [
     color: "magenta",
     best: 184220,
     plays: "31.8K",
+    playable: false,
   },
   {
     id: "serpentina",
@@ -46,6 +49,7 @@ export const GAMES: Game[] = [
     color: "green",
     best: 7820,
     plays: "9.1K",
+    playable: false,
   },
   {
     id: "gloton",
@@ -57,6 +61,7 @@ export const GAMES: Game[] = [
     color: "yellow",
     best: 96400,
     plays: "27.2K",
+    playable: false,
   },
   {
     id: "invasores",
@@ -68,6 +73,7 @@ export const GAMES: Game[] = [
     color: "green",
     best: 54190,
     plays: "18.0K",
+    playable: false,
   },
   {
     id: "rocas",
@@ -79,6 +85,7 @@ export const GAMES: Game[] = [
     color: "yellow",
     best: 41200,
     plays: "15.6K",
+    playable: true,
   },
   {
     id: "ranaria",
@@ -90,6 +97,7 @@ export const GAMES: Game[] = [
     color: "green",
     best: 18900,
     plays: "6.4K",
+    playable: false,
   },
   {
     id: "duelo-pixel",
@@ -101,6 +109,7 @@ export const GAMES: Game[] = [
     color: "cyan",
     best: 24,
     plays: "4.2K",
+    playable: false,
   },
 ];
 

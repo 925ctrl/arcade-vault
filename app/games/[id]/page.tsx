@@ -31,7 +31,7 @@ export default async function GameDetailPage({ params }: PageProps<"/games/[id]"
           <div className="detail-tags">
             <span>{game.category}</span>
             <span>1 JUGADOR</span>
-            <span>TECLADO / TÁCTIL</span>
+            <span>TECLADO</span>
             <span>RETRO 1985</span>
           </div>
           <h2 className="neon-cyan">{game.title}</h2>
@@ -55,9 +55,15 @@ export default async function GameDetailPage({ params }: PageProps<"/games/[id]"
             </div>
           </div>
           <div className="detail-actions">
-            <Link href={`/games/${game.id}/play`} className="btn xl pulse">
-              ▶ JUGAR AHORA
-            </Link>
+            {game.playable ? (
+              <Link href={`/games/${game.id}/play`} className="btn xl pulse">
+                ▶ JUGAR AHORA
+              </Link>
+            ) : (
+              <button className="btn xl" disabled>
+                PRÓXIMAMENTE
+              </button>
+            )}
             <Link href="/library" className="btn ghost lg">
               VOLVER AL VAULT
             </Link>
