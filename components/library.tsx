@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { GameCard } from "@/components/game-card";
 import { CATEGORIES, GAMES } from "@/lib/games";
+import type { GameStats } from "@/lib/scores";
 
-export function Library() {
+export function Library({ stats }: { stats: Record<string, GameStats> }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>("TODOS");
 
@@ -46,7 +47,7 @@ export function Library() {
 
       <div className="av-grid">
         {filtered.map((g) => (
-          <GameCard key={g.id} game={g} />
+          <GameCard key={g.id} game={g} best={stats[g.id]?.best ?? null} />
         ))}
         {filtered.length === 0 && (
           <div className="col-span-full p-20 text-center text-ink-faint">

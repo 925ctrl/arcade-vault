@@ -1019,6 +1019,36 @@ a {
   color: var(--bronze);
   text-shadow: 0 0 6px rgba(217, 122, 58, 0.5);
 }
+.lb-you-label {
+  padding: 8px 16px;
+  font-family: var(--pixel);
+  font-size: 9px;
+  color: var(--yellow);
+  letter-spacing: 0.14em;
+  background: rgba(245, 255, 0, 0.04);
+  border-bottom: 1px solid var(--line-2);
+}
+.lb-row.you {
+  background: rgba(245, 255, 0, 0.05);
+  border-left: 3px solid var(--yellow);
+  padding-left: 13px;
+}
+.lb-empty,
+.lb-error {
+  padding: 24px 16px;
+  text-align: center;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1.6;
+}
+.lb-empty {
+  color: var(--ink-faint);
+}
+.lb-error {
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255, 0, 110, 0.5);
+}
 
 /* ===== player ===== */
 .av-player {
@@ -1269,23 +1299,56 @@ a {
 }
 .toast-saved {
   font-family: var(--pixel);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--green);
   text-shadow: 0 0 8px var(--green);
-  margin-top: 14px;
+  margin-top: 16px;
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
+  max-width: 100%;
   border-right: 2px solid var(--green);
   animation:
-    typewriter 1.6s steps(22) forwards,
+    typewriter 1.8s steps(37) forwards,
     caret 0.8s steps(1) infinite;
   width: 0;
 }
 @keyframes typewriter {
   to {
-    width: 22ch;
+    width: 37ch;
   }
+}
+.modal .save-status {
+  margin-top: 16px;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(0, 245, 255, 0.5);
+}
+.modal .save-no-record {
+  margin-top: 16px;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+.modal .save-no-record .best-val {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--yellow);
+}
+.modal .save-error {
+  margin-top: 16px;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255, 0, 110, 0.5);
 }
 @keyframes caret {
   50% {
@@ -1608,6 +1671,22 @@ a {
   letter-spacing: 0.16em;
   background: rgba(245, 255, 0, 0.04);
   border-bottom: 1px solid var(--line-2);
+}
+.hall-table .hall-empty,
+.hall-table .hall-error {
+  padding: 28px 18px;
+  text-align: center;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1.6;
+}
+.hall-table .hall-empty {
+  color: var(--ink-faint);
+}
+.hall-table .hall-error {
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255, 0, 110, 0.5);
 }
 @keyframes rise {
   from {

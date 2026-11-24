@@ -1,24 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
+import { startGame, submitScore } from "@/app/games/[id]/play/actions";
 import {
   AsteroidsCanvas,
   type AsteroidsCanvasHandle,
 } from "@/components/asteroids-canvas";
 import { useUser } from "@/components/user-provider";
 import type { AsteroidsPhase, AsteroidsStats } from "@/games/asteroids/engine";
+import { readCachedBest, writeCachedBest } from "@/lib/best-cache";
 import type { Game } from "@/lib/games";
-import { appendScore } from "@/lib/storage";
 
 const INITIAL_STATS: AsteroidsStats = { score: 0, lives: 3, level: 1 };
+
+type SaveState =
+  | { status: "idle" }
+  | { status: "saving"; isRetry: boolean }
+  | { status: "record"; maxScore: number }
+  | { status: "not_record"; maxScore: number }
+  | { status: "error"; message: string };
 
 export function GamePlayer({ game }: { game: Game }) {
   const { user } = useUser();
   const gameRef = useRef<AsteroidsCanvasHandle | null>(null);
   const [stats, setStats] = useState<AsteroidsStats>(INITIAL_STATS);
   const [phase, setPhase] = useState<AsteroidsPhase>("ready");
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>({ status: "idle" });
+  const [isPending, startTransition] = useTransition();
+
+  const prevPhaseRef = useRef<AsteroidsPhase>("ready");
+  const startedRef = useRef(false);
+  const submittedRef = useRef(false);
+  const scoreRef = useRef(0);
+  const lastScoreRef = useRef(0);
 
   const { score, lives, level } = stats;
   const paused = phase === "paused";
@@ -27,17 +42,91 @@ export function GamePlayer({ game }: { game: Game }) {
     phase === "playing" || phase === "dead" || phase === "paused";
   const name = user?.username ?? "INVITADO";
 
-  // Solo los jugadores con sesión guardan puntuación, siempre con su username.
-  const saveScore = () => {
-    if (!user) return;
-    appendScore({ game: game.id, score, name: user.username, at: Date.now() });
-    setSaved(true);
+  const runSubmit = useCallback(
+    (finalScore: number, isRetry: boolean) => {
+      if (!user) return;
+      setSaveState({ status: "saving", isRetry });
+      startTransition(async () => {
+        try {
+          const result = await submitScore(game.id, finalScore);
+          if (result.status === "success") {
+            writeCachedBest(user.id, game.id, result.maxScore);
+            setSaveState(
+              result.isRecord
+                ? { status: "record", maxScore: result.maxScore }
+                : { status: "not_record", maxScore: result.maxScore },
+            );
+          } else {
+            setSaveState({ status: "error", message: result.message });
+          }
+        } catch {
+          setSaveState({
+            status: "error",
+            message: "NO SE PUDO GUARDAR LA PUNTUACIÓN. INTÉNTALO DE NUEVO.",
+          });
+        }
+      });
+    },
+    [game.id, user],
+  );
+
+  const handleStats = useCallback((nextStats: AsteroidsStats) => {
+    scoreRef.current = nextStats.score;
+    setStats(nextStats);
+  }, []);
+
+  const handlePhase = useCallback(
+    (nextPhase: AsteroidsPhase) => {
+      const prev = prevPhaseRef.current;
+      prevPhaseRef.current = nextPhase;
+      setPhase(nextPhase);
+
+      if (prev === "ready" && nextPhase === "playing") {
+        startedRef.current = true;
+        submittedRef.current = false;
+        if (user) {
+          void startGame(game.id);
+        }
+      }
+
+      if (
+        nextPhase === "over" &&
+        user &&
+        startedRef.current &&
+        !submittedRef.current
+      ) {
+        submittedRef.current = true;
+        const finalScore = scoreRef.current;
+        lastScoreRef.current = finalScore;
+
+        const cachedBest = readCachedBest(user.id, game.id);
+        if (cachedBest !== null && finalScore <= cachedBest) {
+          setSaveState({ status: "not_record", maxScore: cachedBest });
+        } else {
+          runSubmit(finalScore, false);
+        }
+      }
+    },
+    [game.id, runSubmit, user],
+  );
+
+  const retrySave = () => {
+    runSubmit(lastScoreRef.current, true);
   };
 
   const restart = () => {
-    setSaved(false);
+    startedRef.current = false;
+    submittedRef.current = false;
+    prevPhaseRef.current = "ready";
+    scoreRef.current = 0;
+    lastScoreRef.current = 0;
+    setSaveState({ status: "idle" });
     gameRef.current?.reset();
   };
+
+  const showRetryButton =
+    saveState.status === "error" ||
+    (saveState.status === "saving" && saveState.isRetry);
 
   return (
     <div className="av-player fade-in">
@@ -87,8 +176,8 @@ export function GamePlayer({ game }: { game: Game }) {
         <div className="crt-screen">
           <AsteroidsCanvas
             ref={gameRef}
-            onStats={setStats}
-            onPhase={setPhase}
+            onStats={handleStats}
+            onPhase={handlePhase}
           />
           {paused && (
             <div className="crt-content z-5! bg-black/60!">
@@ -120,18 +209,39 @@ export function GamePlayer({ game }: { game: Game }) {
                 Fama.
               </p>
             )}
-            {saved && <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>}
+            {user && saveState.status === "saving" && (
+              <div className="save-status">GUARDANDO…</div>
+            )}
+            {user && saveState.status === "record" && (
+              <div className="toast-saved">
+                ▸ ¡NUEVO RÉCORD! PUNTUACIÓN GUARDADA_
+              </div>
+            )}
+            {user && saveState.status === "not_record" && (
+              <div className="save-no-record">
+                <div>▸ LÁSTIMA, NO SUPERASTE TU RÉCORD</div>
+                <div className="best-val">
+                  RÉCORD ACTUAL: {saveState.maxScore.toLocaleString("es-ES")}
+                </div>
+              </div>
+            )}
+            {user && saveState.status === "error" && (
+              <div className="save-error">[ERR] {saveState.message}</div>
+            )}
             <div className="actions">
-              {!user ? (
+              {!user && (
                 <Link href="/auth" className="btn yellow">
                   INICIAR SESIÓN
                 </Link>
-              ) : (
-                !saved && (
-                  <button className="btn yellow" onClick={saveScore}>
-                    GUARDAR PUNTUACIÓN
-                  </button>
-                )
+              )}
+              {user && showRetryButton && (
+                <button
+                  className="btn yellow"
+                  disabled={isPending || saveState.status === "saving"}
+                  onClick={retrySave}
+                >
+                  REINTENTAR GUARDADO
+                </button>
               )}
               <button className="btn" onClick={restart}>
                 JUGAR DE NUEVO
