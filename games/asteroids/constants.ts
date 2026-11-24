@@ -55,3 +55,9 @@ export const COLOR_UFO = "#f5ff00";
 export const COLOR_UFO_BULLET = "#ff006e";
 export const COLOR_POWERUP = "#00ff88";
 export const COLOR_SUBTITLE = "#8a8fb5";
+
+export const ASTEROIDS_INITIAL_STATS = {
+  score: 0,
+  lives: INITIAL_LIVES,
+  level: 1,
+} as const;

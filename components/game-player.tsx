@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { startGame, submitScore } from "@/app/games/[id]/play/actions";
 import { useUser } from "@/components/user-provider";
 import { ENGINES } from "@/games/registry";
 import type { EngineHandle, EnginePhase, EngineStats } from "@/games/types";
 import { readCachedBest, writeCachedBest } from "@/lib/best-cache";
 import type { Game } from "@/lib/games";
-
-const INITIAL_STATS: EngineStats = { score: 0, lives: 3, level: 1 };
 
 type SaveState =
   | { status: "idle" }
@@ -19,10 +17,10 @@ type SaveState =
   | { status: "error"; message: string };
 
 export function GamePlayer({ game }: { game: Game }) {
-  const Engine = ENGINES[game.id];
+  const { Canvas: Engine, initialStats } = ENGINES[game.id];
   const { user } = useUser();
   const gameRef = useRef<EngineHandle | null>(null);
-  const [stats, setStats] = useState<EngineStats>(INITIAL_STATS);
+  const [stats, setStats] = useState<EngineStats>(initialStats);
   const [phase, setPhase] = useState<EnginePhase>("ready");
   const [saveState, setSaveState] = useState<SaveState>({ status: "idle" });
   const [isPending, startTransition] = useTransition();
@@ -33,7 +31,7 @@ export function GamePlayer({ game }: { game: Game }) {
   const scoreRef = useRef(0);
   const lastScoreRef = useRef(0);
 
-  const { score, lives, level } = stats;
+  const { score, lives, lines, level } = stats;
   const paused = phase === "paused";
   const over = phase === "over";
   const canTogglePause =
@@ -112,13 +110,25 @@ export function GamePlayer({ game }: { game: Game }) {
     runSubmit(lastScoreRef.current, true);
   };
 
-  const restart = () => {
+  const resetSession = useCallback(() => {
     startedRef.current = false;
     submittedRef.current = false;
     prevPhaseRef.current = "ready";
     scoreRef.current = 0;
     lastScoreRef.current = 0;
+    setPhase("ready");
+    setStats(initialStats);
     setSaveState({ status: "idle" });
+  }, [initialStats]);
+
+  // Con `cacheComponents`, Next conserva el estado de la ruta al salir de ella
+  // (React <Activity>), pero sus efectos se desmontan: el canvas destruye su
+  // motor y al volver crea uno nuevo en fase "ready". La sesión del jugador
+  // pertenece a ese motor, así que se reinicia junto con él.
+  useEffect(() => resetSession, [resetSession]);
+
+  const restart = () => {
+    resetSession();
     gameRef.current?.reset();
   };
 
@@ -138,10 +148,18 @@ export function GamePlayer({ game }: { game: Game }) {
             <div className="l">Puntuación</div>
             <div className="v">{score.toLocaleString("es-ES")}</div>
           </div>
-          <div className="hud-stat lives">
-            <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
-          </div>
+          {lives !== undefined && (
+            <div className="hud-stat lives">
+              <div className="l">Vidas</div>
+              <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
+            </div>
+          )}
+          {lines !== undefined && (
+            <div className="hud-stat lines">
+              <div className="l">Líneas</div>
+              <div className="v">{lines.toLocaleString("es-ES")}</div>
+            </div>
+          )}
           <div className="hud-stat level">
             <div className="l">Nivel</div>
             <div className="v">{String(level).padStart(2, "0")}</div>

@@ -1,9 +1,24 @@
 import type { ComponentType } from "react";
 import { AsteroidsCanvas } from "@/components/asteroids-canvas";
-import type { EngineCanvasProps } from "@/games/types";
+import { TetrominoCanvas } from "@/components/tetromino-canvas";
+import { ASTEROIDS_INITIAL_STATS } from "@/games/asteroids/constants";
+import { TETROMINO_INITIAL_STATS } from "@/games/tetromino/constants";
+import type { EngineCanvasProps, EngineStats } from "@/games/types";
 
-export const ENGINES: Record<string, ComponentType<EngineCanvasProps>> = {
-  asteroides: AsteroidsCanvas,
+export type EngineDefinition = {
+  Canvas: ComponentType<EngineCanvasProps>;
+  initialStats: EngineStats;
+};
+
+export const ENGINES: Record<string, EngineDefinition> = {
+  asteroides: {
+    Canvas: AsteroidsCanvas,
+    initialStats: ASTEROIDS_INITIAL_STATS,
+  },
+  tetromino: {
+    Canvas: TetrominoCanvas,
+    initialStats: TETROMINO_INITIAL_STATS,
+  },
 };
 
 export function hasEngine(id: string): boolean {
