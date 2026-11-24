@@ -3,20 +3,25 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ComingSoon } from "@/components/coming-soon";
 import { GamePlayer } from "@/components/game-player";
-import { GAMES, getGame } from "@/lib/games";
+import { getGame, getGames } from "@/lib/games";
 
-export function generateStaticParams() {
-  return GAMES.map((g) => ({ id: g.id }));
+export async function generateStaticParams() {
+  const games = await getGames();
+  return games.map((g) => ({ id: g.id }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/games/[id]/play">): Promise<Metadata> {
   const { id } = await params;
-  const game = getGame(id);
-  return {
-    title: game ? `${game.title} · Jugando · Arcade Vault` : "Arcade Vault",
-  };
+  try {
+    const game = await getGame(id);
+    return {
+      title: game ? `${game.title} · Jugando · Arcade Vault` : "Arcade Vault",
+    };
+  } catch {
+    return { title: "Arcade Vault" };
+  }
 }
 
 // `params` es dato de URL: se lee dentro de <Suspense> para que el App Shell
@@ -31,7 +36,7 @@ export default function PlayPage({ params }: PageProps<"/games/[id]/play">) {
 
 async function Play({ params }: Pick<PageProps<"/games/[id]/play">, "params">) {
   const { id } = await params;
-  const game = getGame(id);
+  const game = await getGame(id);
   if (!game) notFound();
 
   return game.playable ? (

@@ -16,10 +16,10 @@ export async function startGame(gameId: string): Promise<void> {
   const user = await readSessionUser();
   if (!user) return;
 
-  const game = getGame(gameId);
-  if (!game?.playable) return;
-
   try {
+    const game = await getGame(gameId);
+    if (!game?.playable) return;
+
     const supabase = await createClient();
     const { error } = await supabase.rpc("start_game", { p_game_id: gameId });
     if (error) {
@@ -39,18 +39,18 @@ export async function submitScore(
     return { status: "error", message: "INICIA SESIÓN PARA GUARDAR." };
   }
 
-  const game = getGame(gameId);
-  if (
-    !game?.playable ||
-    typeof score !== "number" ||
-    !Number.isInteger(score) ||
-    score < 0 ||
-    score > MAX_SCORE
-  ) {
-    return { status: "error", message: "PUNTUACIÓN NO VÁLIDA." };
-  }
-
   try {
+    const game = await getGame(gameId);
+    if (
+      !game?.playable ||
+      typeof score !== "number" ||
+      !Number.isInteger(score) ||
+      score < 0 ||
+      score > MAX_SCORE
+    ) {
+      return { status: "error", message: "PUNTUACIÓN NO VÁLIDA." };
+    }
+
     const supabase = await createClient();
     const { data, error } = await supabase.rpc("submit_score", {
       p_game_id: gameId,

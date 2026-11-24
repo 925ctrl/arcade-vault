@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { GAMES, type GameColor } from "@/lib/games";
+import { GameCover } from "@/components/game-cover";
+import type { Game, GameColor } from "@/lib/games";
 import { useReveal } from "@/lib/use-reveal";
 
 type Feature = { icon: "GAMEPAD" | "FREE" | "TROPHY" | "ROCKET"; title: string; desc: string; color: GameColor };
@@ -37,17 +38,11 @@ type Stat = { value: string; unit: string; sub: string };
 type RecentScore = { player: string; game: string; score: number; ago: string; color: GameColor };
 type TopPlayer = { rank: number; player: string; score: number };
 
-const STATS: Stat[] = [
-  { value: `${GAMES.length}+`, unit: "JUEGOS", sub: "Y CONTANDO" },
-  { value: "MILES", unit: "DE PARTIDAS", sub: "JUGADAS CADA DÍA" },
-  { value: "GLOBAL", unit: "RANKING", sub: "COMPITE CON EL MUNDO" },
-];
-
 const RECENT_SCORES: RecentScore[] = [
   { player: "NEONFOX", game: "Caída", score: 184220, ago: "hace 2 min", color: "magenta" },
   { player: "PX_KAI", game: "Glotón", score: 96400, ago: "hace 5 min", color: "yellow" },
   { player: "Z3R0COOL", game: "Invasores", score: 54190, ago: "hace 8 min", color: "green" },
-  { player: "VAULT_07", game: "Rocas", score: 41200, ago: "hace 12 min", color: "cyan" },
+  { player: "VAULT_07", game: "Asteroides", score: 41200, ago: "hace 12 min", color: "cyan" },
   { player: "GLITCHA", game: "Bloque Buster", score: 28450, ago: "hace 18 min", color: "cyan" },
   { player: "ARKADYA", game: "Serpentina", score: 7820, ago: "hace 24 min", color: "green" },
   { player: "CYBER_LU", game: "Ranaria", score: 18900, ago: "hace 31 min", color: "yellow" },
@@ -196,8 +191,24 @@ function FeatureIcon({ kind }: { kind: Feature["icon"] }) {
   );
 }
 
-export function Home() {
+export function Home({
+  games,
+  catalogError = false,
+}: {
+  games: Game[];
+  catalogError?: boolean;
+}) {
   useReveal();
+  const stats: Stat[] = [
+    {
+      value: catalogError ? "—" : `${games.length}+`,
+      unit: "JUEGOS",
+      sub: "Y CONTANDO",
+    },
+    { value: "MILES", unit: "DE PARTIDAS", sub: "JUGADAS CADA DÍA" },
+    { value: "GLOBAL", unit: "RANKING", sub: "COMPITE CON EL MUNDO" },
+  ];
+
   return (
     <div className="home fade-in">
       {/* HERO */}
@@ -257,19 +268,25 @@ export function Home() {
           <h2 className="section-title">JUEGOS DISPONIBLES AHORA</h2>
           <div className="section-rule"></div>
         </div>
-        <div className="mini-rail">
-          {GAMES.slice(0, 6).map((g) => (
-            <Link key={g.id} href={`/games/${g.id}`} className="mini-card block">
-              <div className="mini-cover">
-                <div className={"cover-bg " + g.cover}></div>
-              </div>
-              <div className="mini-meta">
-                <div className="mini-title">{g.title}</div>
-                <div className="mini-cat">{g.category}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {catalogError ? (
+          <div className="catalog-error">
+            [ERR] NO SE PUDO CARGAR EL CATÁLOGO.
+          </div>
+        ) : (
+          <div className="mini-rail">
+            {games.slice(0, 6).map((g) => (
+              <Link key={g.id} href={`/games/${g.id}`} className="mini-card block">
+                <div className="mini-cover">
+                  <GameCover game={g} />
+                </div>
+                <div className="mini-meta">
+                  <div className="mini-title">{g.title}</div>
+                  <div className="mini-cat">{g.category}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
         <div className="mt-6 text-center">
           <Link href="/library" className="btn lg">
             VER TODOS LOS JUEGOS →
@@ -280,7 +297,7 @@ export function Home() {
       {/* STATS */}
       <section className="home-stats reveal">
         <div className="stats-inner">
-          {STATS.map((st, i) => (
+          {stats.map((st, i) => (
             <div key={st.unit} className="stat-block" style={{ transitionDelay: i * 90 + "ms" }}>
               <div className="stat-n neon-yellow">{st.value}</div>
               <div className="stat-u pixel">{st.unit}</div>

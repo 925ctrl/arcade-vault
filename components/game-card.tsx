@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import { GameCover } from "@/components/game-cover";
 import type { Game } from "@/lib/games";
 
 const BUTTON_CLASS: Record<Game["color"], string> = {
@@ -42,7 +43,7 @@ export function GameCard({
       onMouseLeave={onLeave}
     >
       <div className="cover">
-        <div className={"cover-bg " + game.cover}></div>
+        <GameCover game={game} />
         <div className="label">{game.category}</div>
       </div>
       <div className="meta">

@@ -1,28 +1,12 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useRef } from "react";
-import type { Ref } from "react";
-import {
-  createAsteroidsGame,
-  type AsteroidsGame,
-  type AsteroidsPhase,
-  type AsteroidsStats,
-} from "@/games/asteroids/engine";
+import { createAsteroidsGame, type AsteroidsGame } from "@/games/asteroids/engine";
+import type { EngineCanvasProps, EngineHandle } from "@/games/types";
 
-export type AsteroidsCanvasHandle = {
-  pause(): void;
-  resume(): void;
-  end(): void;
-  reset(): void;
-};
+export type AsteroidsCanvasHandle = EngineHandle;
 
-type AsteroidsCanvasProps = {
-  ref?: Ref<AsteroidsCanvasHandle>;
-  onStats: (stats: AsteroidsStats) => void;
-  onPhase: (phase: AsteroidsPhase) => void;
-};
-
-export function AsteroidsCanvas({ ref, onStats, onPhase }: AsteroidsCanvasProps) {
+export function AsteroidsCanvas({ ref, onStats, onPhase }: EngineCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef<AsteroidsGame | null>(null);
   const callbacksRef = useRef({ onStats, onPhase });
@@ -61,7 +45,7 @@ export function AsteroidsCanvas({ ref, onStats, onPhase }: AsteroidsCanvasProps)
   return (
     <canvas
       ref={canvasRef}
-      aria-label="ROCAS"
+      aria-label="ASTEROIDES"
       style={{ display: "block", width: "100%", height: "100%" }}
     />
   );

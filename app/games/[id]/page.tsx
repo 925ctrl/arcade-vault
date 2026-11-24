@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { GameCover } from "@/components/game-cover";
 import { Leaderboard } from "@/components/leaderboard";
-import { GAMES, getGame } from "@/lib/games";
+import { getGame, getGames } from "@/lib/games";
 import {
   formatPlays,
   getGameStats,
@@ -13,16 +14,21 @@ import {
 } from "@/lib/scores";
 import { getSessionUser } from "@/lib/supabase/session";
 
-export function generateStaticParams() {
-  return GAMES.map((g) => ({ id: g.id }));
+export async function generateStaticParams() {
+  const games = await getGames();
+  return games.map((g) => ({ id: g.id }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/games/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const game = getGame(id);
-  return { title: game ? `${game.title} · Arcade Vault` : "Arcade Vault" };
+  try {
+    const game = await getGame(id);
+    return { title: game ? `${game.title} · Arcade Vault` : "Arcade Vault" };
+  } catch {
+    return { title: "Arcade Vault" };
+  }
 }
 
 async function GameStatCells({ gameId }: { gameId: string }) {
@@ -149,14 +155,14 @@ async function GameDetail({
   params,
 }: Pick<PageProps<"/games/[id]">, "params">) {
   const { id } = await params;
-  const game = getGame(id);
+  const game = await getGame(id);
   if (!game) notFound();
 
   return (
     <div className="av-detail fade-in">
       <div>
         <div className="detail-cover">
-          <div className={"cover-bg " + game.cover}></div>
+          <GameCover game={game} />
         </div>
         <div className="detail-info mt-5">
           <div className="detail-tags">

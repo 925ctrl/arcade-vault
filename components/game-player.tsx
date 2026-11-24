@@ -3,16 +3,13 @@
 import Link from "next/link";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { startGame, submitScore } from "@/app/games/[id]/play/actions";
-import {
-  AsteroidsCanvas,
-  type AsteroidsCanvasHandle,
-} from "@/components/asteroids-canvas";
 import { useUser } from "@/components/user-provider";
-import type { AsteroidsPhase, AsteroidsStats } from "@/games/asteroids/engine";
+import { ENGINES } from "@/games/registry";
+import type { EngineHandle, EnginePhase, EngineStats } from "@/games/types";
 import { readCachedBest, writeCachedBest } from "@/lib/best-cache";
 import type { Game } from "@/lib/games";
 
-const INITIAL_STATS: AsteroidsStats = { score: 0, lives: 3, level: 1 };
+const INITIAL_STATS: EngineStats = { score: 0, lives: 3, level: 1 };
 
 type SaveState =
   | { status: "idle" }
@@ -22,14 +19,15 @@ type SaveState =
   | { status: "error"; message: string };
 
 export function GamePlayer({ game }: { game: Game }) {
+  const Engine = ENGINES[game.id];
   const { user } = useUser();
-  const gameRef = useRef<AsteroidsCanvasHandle | null>(null);
-  const [stats, setStats] = useState<AsteroidsStats>(INITIAL_STATS);
-  const [phase, setPhase] = useState<AsteroidsPhase>("ready");
+  const gameRef = useRef<EngineHandle | null>(null);
+  const [stats, setStats] = useState<EngineStats>(INITIAL_STATS);
+  const [phase, setPhase] = useState<EnginePhase>("ready");
   const [saveState, setSaveState] = useState<SaveState>({ status: "idle" });
   const [isPending, startTransition] = useTransition();
 
-  const prevPhaseRef = useRef<AsteroidsPhase>("ready");
+  const prevPhaseRef = useRef<EnginePhase>("ready");
   const startedRef = useRef(false);
   const submittedRef = useRef(false);
   const scoreRef = useRef(0);
@@ -70,13 +68,13 @@ export function GamePlayer({ game }: { game: Game }) {
     [game.id, user],
   );
 
-  const handleStats = useCallback((nextStats: AsteroidsStats) => {
+  const handleStats = useCallback((nextStats: EngineStats) => {
     scoreRef.current = nextStats.score;
     setStats(nextStats);
   }, []);
 
   const handlePhase = useCallback(
-    (nextPhase: AsteroidsPhase) => {
+    (nextPhase: EnginePhase) => {
       const prev = prevPhaseRef.current;
       prevPhaseRef.current = nextPhase;
       setPhase(nextPhase);
@@ -174,11 +172,13 @@ export function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          <AsteroidsCanvas
-            ref={gameRef}
-            onStats={handleStats}
-            onPhase={handlePhase}
-          />
+          {Engine && (
+            <Engine
+              ref={gameRef}
+              onStats={handleStats}
+              onPhase={handlePhase}
+            />
+          )}
           {paused && (
             <div className="crt-content z-5! bg-black/60!">
               <div>

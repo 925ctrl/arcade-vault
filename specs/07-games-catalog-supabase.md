@@ -1,6 +1,6 @@
 # SPEC 07 — Catálogo de juegos en Supabase: ASTEROIDES como único juego
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 05, SPEC 06
 > **Fecha:** 2026-11-24
 > **Objetivo:** Leer el catálogo de juegos desde una tabla `public.games` de Supabase, con ROCAS renombrado a ASTEROIDES (id `asteroides`) como único juego y una captura real del juego como portada, eliminando la constante `GAMES` y los otros 7 juegos del código.
@@ -230,29 +230,29 @@ Los pasos 2 a 4 se hacen seguidos: entre la migración y el cambio de código, e
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] La consola del navegador no muestra errores ni avisos de hidratación en `/`, `/library`, `/games/asteroides`, `/games/asteroides/play` y `/hall-of-fame`.
-- [ ] `list_migrations` muestra la migración de `games` aplicada en el remoto, y `supabase/migrations/` la contiene.
-- [ ] `public.games` tiene RLS activado y una sola fila (`asteroides`, `playable = true`, `cover_image = 'asteroides.webp'`).
-- [ ] `get_advisors` (security) no reporta avisos sobre `games`, `player_stats`, `start_game` ni `submit_score`.
-- [ ] `lib/supabase/database.types.ts` contiene la tabla `games`.
-- [ ] `player_stats` no tiene filas con `game_id = 'rocas'`. La fila que existía conserva `max_score = 24830` y `games_played` con `game_id = 'asteroides'`.
-- [ ] Un `insert` en `player_stats` con un `game_id` que no existe en `games` falla por la FK.
-- [ ] Un `insert`, `update` o `delete` en `games` con la publishable key, con o sin sesión, es rechazado por RLS.
-- [ ] `start_game('rocas')` y `submit_score('rocas', 100)` con sesión lanzan `invalid game`.
-- [ ] `/library` muestra una sola tarjeta, ASTEROIDES, con la imagen `/covers/asteroides.webp`, y los chips TODOS y SHOOTER.
-- [ ] La home muestra solo ASTEROIDES en "JUEGOS DISPONIBLES AHORA" y "1+ JUEGOS" en el contador.
-- [ ] `/hall-of-fame` muestra una sola pestaña, ASTEROIDES, con el ranking de SPEC 06 (incluido el récord de 24.830).
-- [ ] `/games/asteroides` muestra la imagen de portada, el título ASTEROIDES, la descripción de la BD, el leaderboard, "Mejor global" y "Partidas".
-- [ ] `/games/asteroides/play` es jugable. La pantalla de inicio del canvas dice ASTEROIDES. Empezar una partida con sesión suma 1 a `games_played` de `asteroides`, y un récord nuevo actualiza `max_score`.
-- [ ] `/games/rocas`, `/games/rocas/play`, `/games/caida` y `/games/bloque-buster` devuelven 404.
-- [ ] `public/covers/asteroides.webp` existe, mide 800×600 y muestra una partida en curso sin HUD.
-- [ ] Con `cover_image` puesto a `null` en la BD (y la caché caducada), la tarjeta, la home y el detalle muestran el fondo oscuro con el título. Con un nombre de archivo que no existe, también.
-- [ ] Con `playable = false` en la BD, `/games/asteroides/play` muestra PRÓXIMAMENTE y `submitScore` devuelve "PUNTUACIÓN NO VÁLIDA.". Se restaura a `true` al terminar.
-- [ ] Un cambio de `title` en la BD aparece en `/library` en, como mucho, unos minutos sin reiniciar el servidor (`cacheLife("minutes")`).
-- [ ] Con `NEXT_PUBLIC_SUPABASE_URL` vacía (en `npm run dev`), `/library`, `/hall-of-fame` y la home muestran "[ERR] NO SE PUDO CARGAR EL CATÁLOGO.". `/games/asteroides` muestra "[ERR] NO SE PUDO CARGAR EL JUEGO." con REINTENTAR, y el servidor registra el motivo.
-- [ ] `app/globals.css` no contiene `.cover-bg` ni ninguna clase `.cover-*` generadora.
-- [ ] Fuera de `references/` y `specs/`, el repo no contiene `rocas`, `ROCAS`, `GAMES` ni `CATEGORIES`.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] La consola del navegador no muestra errores ni avisos de hidratación en `/`, `/library`, `/games/asteroides`, `/games/asteroides/play` y `/hall-of-fame`.
+- [x] `list_migrations` muestra la migración de `games` aplicada en el remoto, y `supabase/migrations/` la contiene.
+- [x] `public.games` tiene RLS activado y una sola fila (`asteroides`, `playable = true`, `cover_image = 'asteroides.webp'`).
+- [x] `get_advisors` (security) no reporta avisos sobre `games`, `player_stats`, `start_game` ni `submit_score`.
+- [x] `lib/supabase/database.types.ts` contiene la tabla `games`.
+- [x] `player_stats` no tiene filas con `game_id = 'rocas'`. La fila que existía conserva `max_score = 24830` y `games_played` con `game_id = 'asteroides'`.
+- [x] Un `insert` en `player_stats` con un `game_id` que no existe en `games` falla por la FK.
+- [x] Un `insert`, `update` o `delete` en `games` con la publishable key, con o sin sesión, es rechazado por RLS.
+- [x] `start_game('rocas')` y `submit_score('rocas', 100)` con sesión lanzan `invalid game`.
+- [x] `/library` muestra una sola tarjeta, ASTEROIDES, con la imagen `/covers/asteroides.webp`, y los chips TODOS y SHOOTER.
+- [x] La home muestra solo ASTEROIDES en "JUEGOS DISPONIBLES AHORA" y "1+ JUEGOS" en el contador.
+- [x] `/hall-of-fame` muestra una sola pestaña, ASTEROIDES, con el ranking de SPEC 06 (incluido el récord de 24.830).
+- [x] `/games/asteroides` muestra la imagen de portada, el título ASTEROIDES, la descripción de la BD, el leaderboard, "Mejor global" y "Partidas".
+- [x] `/games/asteroides/play` es jugable. La pantalla de inicio del canvas dice ASTEROIDES. Empezar una partida con sesión suma 1 a `games_played` de `asteroides`, y un récord nuevo actualiza `max_score`.
+- [x] `/games/rocas`, `/games/rocas/play`, `/games/caida` y `/games/bloque-buster` devuelven 404.
+- [x] `public/covers/asteroides.webp` existe, mide 800×600 y muestra una partida en curso sin HUD.
+- [x] Con `cover_image` puesto a `null` en la BD (y la caché caducada), la tarjeta, la home y el detalle muestran el fondo oscuro con el título. Con un nombre de archivo que no existe, también.
+- [x] Con `playable = false` en la BD, `/games/asteroides/play` muestra PRÓXIMAMENTE y `submitScore` devuelve "PUNTUACIÓN NO VÁLIDA.". Se restaura a `true` al terminar.
+- [x] Un cambio de `title` en la BD aparece en `/library` en, como mucho, unos minutos sin reiniciar el servidor (`cacheLife("minutes")`).
+- [x] Con `NEXT_PUBLIC_SUPABASE_URL` vacía (en `npm run dev`), `/library`, `/hall-of-fame` y la home muestran "[ERR] NO SE PUDO CARGAR EL CATÁLOGO.". `/games/asteroides` muestra "[ERR] NO SE PUDO CARGAR EL JUEGO." con REINTENTAR, y el servidor registra el motivo.
+- [x] `app/globals.css` no contiene `.cover-bg` ni ninguna clase `.cover-*` generadora.
+- [x] Fuera de `references/` y `specs/`, el repo no contiene `rocas`, `ROCAS`, `GAMES` ni `CATEGORIES`.
 
 ## Decisiones
 

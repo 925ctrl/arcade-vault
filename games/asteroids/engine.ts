@@ -25,12 +25,13 @@ import {
   WORLD_H,
   WORLD_W,
 } from "./constants";
+import type { EnginePhase, EngineStats } from "@/games/types";
 import { Asteroid, Bullet, Particle, PowerUp, Ship, Ufo, dist, rand } from "./entities";
 
-export type AsteroidsStats = { score: number; lives: number; level: number };
+export type AsteroidsStats = EngineStats;
 
 // ready: pantalla "PULSA ESPACIO"; dead: esperando reaparición (2 s); over: partida terminada.
-export type AsteroidsPhase = "ready" | "playing" | "dead" | "paused" | "over";
+export type AsteroidsPhase = EnginePhase;
 
 export type AsteroidsCallbacks = {
   onStats(stats: AsteroidsStats): void;
@@ -426,7 +427,7 @@ export function createAsteroidsGame(
     ctx!.shadowColor = COLOR_SHIP;
     ctx!.shadowBlur = 16;
     ctx!.font = `bold 52px ${fontFamily}`;
-    ctx!.fillText("ROCAS", WORLD_W / 2, WORLD_H / 2 - 22);
+    ctx!.fillText("ASTEROIDES", WORLD_W / 2, WORLD_H / 2 - 22);
 
     ctx!.shadowBlur = 0;
     ctx!.fillStyle = COLOR_SUBTITLE;
