@@ -11,7 +11,13 @@ const BUTTON_CLASS: Record<Game["color"], string> = {
   yellow: " yellow",
 };
 
-export function GameCard({ game }: { game: Game }) {
+export function GameCard({
+  game,
+  best,
+}: {
+  game: Game;
+  best: number | null;
+}) {
   const tiltRef = useRef<HTMLAnchorElement>(null);
 
   const onMove = (e: React.MouseEvent) => {
@@ -45,7 +51,7 @@ export function GameCard({ game }: { game: Game }) {
         <div className="row">
           <div className="score-badge">
             <span>MEJOR PUNTUACIÓN</span>
-            <b>{game.best.toLocaleString("es-ES")}</b>
+            <b>{best !== null ? best.toLocaleString("es-ES") : "—"}</b>
           </div>
           {/* span, no button: un control dentro del enlace de la tarjeta sería HTML inválido */}
           <span className={"btn" + BUTTON_CLASS[game.color]}>JUGAR</span>
