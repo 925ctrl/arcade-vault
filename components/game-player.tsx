@@ -1,42 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
+import {
+  AsteroidsCanvas,
+  type AsteroidsCanvasHandle,
+} from "@/components/asteroids-canvas";
 import { useUser } from "@/components/user-provider";
+import type { AsteroidsPhase, AsteroidsStats } from "@/games/asteroids/engine";
 import type { Game } from "@/lib/games";
 import { appendScore } from "@/lib/storage";
 
-const POINTS_PER_LEVEL = 2500;
+const INITIAL_STATS: AsteroidsStats = { score: 0, lives: 3, level: 1 };
 
 export function GamePlayer({ game }: { game: Game }) {
   const { user } = useUser();
-  const [score, setScore] = useState(0);
-  const lives = 3;
-  const [paused, setPaused] = useState(false);
-  const [over, setOver] = useState(false);
-  const [editedName, setEditedName] = useState<string | null>(null);
+  const gameRef = useRef<AsteroidsCanvasHandle | null>(null);
+  const [stats, setStats] = useState<AsteroidsStats>(INITIAL_STATS);
+  const [phase, setPhase] = useState<AsteroidsPhase>("ready");
   const [saved, setSaved] = useState(false);
 
-  const level = 1 + Math.floor(score / POINTS_PER_LEVEL);
-  const name = editedName ?? user?.username ?? "INVITADO";
+  const { score, lives, level } = stats;
+  const paused = phase === "paused";
+  const over = phase === "over";
+  const canTogglePause =
+    phase === "playing" || phase === "dead" || phase === "paused";
+  const name = user?.username ?? "INVITADO";
 
+  // Solo los jugadores con sesión guardan puntuación, siempre con su username.
   const saveScore = () => {
-    appendScore({ game: game.id, score, name, at: Date.now() });
+    if (!user) return;
+    appendScore({ game: game.id, score, name: user.username, at: Date.now() });
     setSaved(true);
   };
 
   const restart = () => {
-    setScore(0);
-    setPaused(false);
-    setOver(false);
     setSaved(false);
+    gameRef.current?.reset();
   };
-
-  useEffect(() => {
-    if (over || paused) return;
-    const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
-    return () => clearInterval(t);
-  }, [over, paused]);
 
   return (
     <div className="av-player fade-in">
@@ -60,29 +61,41 @@ export function GamePlayer({ game }: { game: Game }) {
           </div>
         </div>
         <div className="hud-actions">
-          <button className="btn yellow" onClick={() => setPaused((p) => !p)}>
+          <button
+            className="btn yellow"
+            disabled={!canTogglePause}
+            onClick={() =>
+              paused ? gameRef.current?.resume() : gameRef.current?.pause()
+            }
+          >
             {paused ? "REANUDAR" : "PAUSA"}
           </button>
-          <button className="btn magenta" onClick={() => setOver(true)}>FIN</button>
-          <Link href={`/games/${game.id}`} className="btn ghost">SALIR</Link>
+          <button
+            className="btn magenta"
+            disabled={over}
+            onClick={() => gameRef.current?.end()}
+          >
+            FIN
+          </button>
+          <Link href={`/games/${game.id}`} className="btn ghost">
+            SALIR
+          </Link>
         </div>
       </div>
 
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor"></div>
-            <div className="enemy e1"></div>
-            <div className="enemy e2"></div>
-            <div className="enemy e3"></div>
-            <div className="player-ship"></div>
-          </div>
+          <AsteroidsCanvas
+            ref={gameRef}
+            onStats={setStats}
+            onPhase={setPhase}
+          />
           {paused && (
             <div className="crt-content z-5! bg-black/60!">
               <div>
                 <div className="pixel neon-yellow text-[22px]!">EN PAUSA</div>
                 <div className="mono mt-2.5 text-[11px] tracking-[0.16em] text-ink-dim">
-                  PULSA REANUDAR PARA CONTINUAR
+                  PULSA REANUDAR O P PARA CONTINUAR
                 </div>
               </div>
             </div>
@@ -101,23 +114,31 @@ export function GamePlayer({ game }: { game: Game }) {
             <h2>FIN DEL JUEGO</h2>
             <div className="final-label">PUNTUACIÓN FINAL</div>
             <div className="final">{score.toLocaleString("es-ES")}</div>
-            {!saved ? (
-              <div className="input-row">
-                <input
-                  value={name}
-                  onChange={(e) => setEditedName(e.target.value.toUpperCase().slice(0, 10))}
-                  placeholder="TUS INICIALES"
-                />
-                <button className="btn yellow" onClick={saveScore}>
-                  GUARDAR PUNTUACIÓN
-                </button>
-              </div>
-            ) : (
-              <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
+            {!user && (
+              <p className="save-locked">
+                Inicia sesión para guardar tus puntuaciones en el Salón de la
+                Fama.
+              </p>
             )}
+            {saved && <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>}
             <div className="actions">
-              <button className="btn" onClick={restart}>JUGAR DE NUEVO</button>
-              <Link href="/library" className="btn magenta">VOLVER AL VAULT</Link>
+              {!user ? (
+                <Link href="/auth" className="btn yellow">
+                  INICIAR SESIÓN
+                </Link>
+              ) : (
+                !saved && (
+                  <button className="btn yellow" onClick={saveScore}>
+                    GUARDAR PUNTUACIÓN
+                  </button>
+                )
+              )}
+              <button className="btn" onClick={restart}>
+                JUGAR DE NUEVO
+              </button>
+              <Link href="/library" className="btn magenta">
+                VOLVER AL VAULT
+              </Link>
             </div>
           </div>
         </div>
