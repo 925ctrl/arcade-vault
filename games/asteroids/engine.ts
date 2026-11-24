@@ -1,4 +1,5 @@
 import {
+  ASTEROIDS_INITIAL_STATS,
   ASTEROID_POINTS,
   ASTEROID_SAFE_DIST,
   COLOR_ASTEROID,
@@ -88,7 +89,7 @@ export function createAsteroidsGame(
   let score = 0;
   let lives = INITIAL_LIVES;
   let level = 1;
-  let lastEmittedStats: AsteroidsStats = { score, lives, level };
+  let lastEmittedStats: AsteroidsStats = { ...ASTEROIDS_INITIAL_STATS };
 
   let phase: AsteroidsPhase = "ready";
   let phaseBeforePause: "playing" | "dead" = "playing";

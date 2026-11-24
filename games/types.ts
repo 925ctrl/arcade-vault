@@ -1,6 +1,11 @@
 import type { Ref } from "react";
 
-export type EngineStats = { score: number; lives: number; level: number };
+export type EngineStats = {
+  score: number;
+  level: number;
+  lives?: number;
+  lines?: number;
+};
 
 export type EnginePhase = "ready" | "playing" | "dead" | "paused" | "over";
 

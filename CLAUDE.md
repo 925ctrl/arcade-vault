@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Arcade Vault: an online platform to play retro arcade games and compete for high scores. UI copy is in Spanish. The project follows Spec Driven Design (`/spec` and `/spec-impl` skills from `Klerith/fernando-skills`, installed via `npx skills@latest add Klerith/fernando-skills`).
+Arcade Vault: an online platform to play retro arcade games and compete for high scores. UI copy is in Spanish. The project follows Spec Driven Design (`/spec` and `/spec-impl` skills from `Klerith/fernando-skills`, installed via `npx skills@latest add Klerith/fernando-skills`). To add a new game (ported from `references/started-games/` or designed from scratch), run `/new-game` (`.claude/skills/new-game/`): it writes the game's spec in `specs/`, which is then implemented with `/spec-impl`.
 
 ## Skills
+
 Usa siempre /frontend-design para diseñar la interfaz del usuario
 
 ## Language conventions
